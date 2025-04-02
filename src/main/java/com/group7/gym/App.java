@@ -1,4 +1,5 @@
-package com.group7.gym.models;
+package com.group7.gym;
+
 
 /**
  * Hello world!
