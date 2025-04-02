@@ -1,4 +1,4 @@
-package src.main.java.com.group7.gym;
+package com.group7.gym;
 
 import java.util.List;
 import java.util.logging.Logger;

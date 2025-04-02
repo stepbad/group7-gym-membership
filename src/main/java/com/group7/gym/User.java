@@ -1,4 +1,4 @@
-package src.main.java.com.group7.gym;
+package com.group7.gym;
 
 /**
  * Abstract User class – base for Admin, Trainer, and Member
