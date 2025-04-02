@@ -1,6 +1,5 @@
 package com.group7.gym;
 
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +11,7 @@ public class WorkoutClassDAO {
         this.conn = conn;
     }
 
+    // CREATE
     public void addWorkoutClass(WorkoutClass wc) throws SQLException {
         String sql = "INSERT INTO workout_classes (type, description, trainer_id) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -22,6 +22,7 @@ public class WorkoutClassDAO {
         }
     }
 
+    // READ: Get all classes
     public List<WorkoutClass> getAllWorkoutClasses() throws SQLException {
         List<WorkoutClass> list = new ArrayList<>();
         String sql = "SELECT * FROM workout_classes";
@@ -39,6 +40,7 @@ public class WorkoutClassDAO {
         return list;
     }
 
+    // READ: Get one by ID
     public WorkoutClass getWorkoutClassById(int id) throws SQLException {
         String sql = "SELECT * FROM workout_classes WHERE workout_class_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -56,6 +58,19 @@ public class WorkoutClassDAO {
         return null;
     }
 
+    // UPDATE
+    public void updateWorkoutClass(WorkoutClass wc) throws SQLException {
+        String sql = "UPDATE workout_classes SET type = ?, description = ?, trainer_id = ? WHERE workout_class_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, wc.getType());
+            stmt.setString(2, wc.getDescription());
+            stmt.setInt(3, wc.getTrainerId());
+            stmt.setInt(4, wc.getWorkoutClassId());
+            stmt.executeUpdate();
+        }
+    }
+
+    // DELETE
     public void deleteWorkoutClass(int id) throws SQLException {
         String sql = "DELETE FROM workout_classes WHERE workout_class_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -64,3 +79,4 @@ public class WorkoutClassDAO {
         }
     }
 }
+

@@ -7,12 +7,11 @@ import java.util.List;
 public class TrainerDAO {
     private Connection conn;
 
-    public TrainerDAO() {
-        this.conn = DBConnection.getConnection();
+    public TrainerDAO(Connection conn) {
+        this.conn = conn;
     }
 
-    // Get all workout classes assigned to this trainer
-    public List<WorkoutClass> getAssignedClasses(int trainerId) {
+    public List<WorkoutClass> getAssignedClasses(int trainerId) throws SQLException {
         List<WorkoutClass> classes = new ArrayList<>();
         String sql = "SELECT * FROM workout_classes WHERE trainer_id = ?";
 
@@ -29,21 +28,16 @@ public class TrainerDAO {
                 );
                 classes.add(wc);
             }
-        } catch (SQLException e) {
-            System.err.println("Error retrieving classes for trainer: " + e.getMessage());
         }
-
         return classes;
     }
 
-    public void assignTrainerToClass(int classId, int trainerId) {
+    public void assignTrainerToClass(int classId, int trainerId) throws SQLException {
         String sql = "UPDATE workout_classes SET trainer_id = ? WHERE workout_class_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, trainerId);
             stmt.setInt(2, classId);
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error assigning trainer to class: " + e.getMessage());
         }
     }
 }
