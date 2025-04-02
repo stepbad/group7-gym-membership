@@ -2,7 +2,8 @@ package com.group7.gym;
 
 /**
  * Hello world!
- *
+ * Connection conn = DBConnection.getConnection();
+ * TrainerService trainerService = new TrainerService(conn);
  */
 public class App 
 {
