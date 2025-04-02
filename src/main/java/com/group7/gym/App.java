@@ -1,4 +1,4 @@
-package com.group7.gym;
+package src.main.java.com.group7.gym;
 
 /**
  * Hello world!
