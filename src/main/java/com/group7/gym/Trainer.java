@@ -1,3 +1,5 @@
+package src.main.java.com.group7.gym;
+
 import java.util.ArrayList;
 import java.util.List;
 

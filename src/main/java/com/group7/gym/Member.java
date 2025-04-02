@@ -1,3 +1,5 @@
+package src.main.java.com.group7.gym;
+
 /**
  * Member class - inherits from User and adds membership-specific attributes
  */
