@@ -1,3 +1,5 @@
+package src.main.java.com.group7.gym;
+
 /**
  * Membership class - Represents a gym membership with relevant details
  */
