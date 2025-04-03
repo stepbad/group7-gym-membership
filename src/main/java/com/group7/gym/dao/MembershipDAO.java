@@ -15,9 +15,14 @@ public class MembershipDAO {
     private static final Logger logger = Logger.getLogger(MembershipDAO.class.getName());
     private final String url = "jdbc:postgresql://localhost:5432/gym_management";
     private final String user = "postgres";
-    private final String password = "your_password"; // Replace with your actual password
+    private final String password = "your_password";
 
-    // Add Membership
+    /**
+     * Inserts a new membership record into the database.
+     *
+     * @param membership Membership object to add
+     * @return true if successful, false otherwise
+     */
     public boolean addMembership(Membership membership) {
         String sql = "INSERT INTO memberships (membership_type, membership_description, membership_cost, member_id) VALUES (?, ?, ?, ?)";
 
@@ -41,7 +46,12 @@ public class MembershipDAO {
         return false;
     }
 
-    // Get Membership by ID
+    /**
+     * Retrieves a membership by its unique ID.
+     *
+     * @param membershipId ID of the membership
+     * @return Membership object or null if not found
+     */
     public Membership getMembershipById(int membershipId) {
         String sql = "SELECT * FROM memberships WHERE membership_id = ?";
         Membership membership = null;
@@ -67,7 +77,11 @@ public class MembershipDAO {
         return membership;
     }
 
-    // Get All Memberships
+    /**
+     * Retrieves all memberships from the database.
+     *
+     * @return List of Membership objects
+     */
     public List<Membership> getAllMemberships() {
         List<Membership> memberships = new ArrayList<>();
         String sql = "SELECT * FROM memberships";
@@ -92,7 +106,12 @@ public class MembershipDAO {
         return memberships;
     }
 
-    // Update Membership
+    /**
+     * Updates an existing membership record in the database.
+     *
+     * @param membership Membership object with updated values
+     * @return true if successful, false otherwise
+     */
     public boolean updateMembership(Membership membership) {
         String sql = "UPDATE memberships SET membership_type = ?, membership_description = ?, membership_cost = ? WHERE membership_id = ?";
 
@@ -116,7 +135,12 @@ public class MembershipDAO {
         return false;
     }
 
-    // Delete Membership
+    /**
+     * Deletes a membership from the database.
+     *
+     * @param membershipId ID of the membership to delete
+     * @return true if deleted, false otherwise
+     */
     public boolean deleteMembership(int membershipId) {
         String sql = "DELETE FROM memberships WHERE membership_id = ?";
 
@@ -137,7 +161,11 @@ public class MembershipDAO {
         return false;
     }
 
-    // Get Total Revenue
+    /**
+     * Calculates the total revenue generated from all memberships.
+     *
+     * @return Total revenue as a double
+     */
     public double getTotalRevenue() {
         String sql = "SELECT SUM(membership_cost) AS total_revenue FROM memberships";
         double totalRevenue = 0.0;
