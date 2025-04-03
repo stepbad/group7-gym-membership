@@ -7,19 +7,26 @@ import com.group7.gym.dao.MembershipDAO;
 import com.group7.gym.models.Membership;
 
 /**
- * Service class for managing memberships
+ * Service class for managing business logic related to memberships.
  */
 public class MembershipService {
 
     private static final Logger logger = Logger.getLogger(MembershipService.class.getName());
     private MembershipDAO membershipDAO;
 
-    // Constructor
+    /**
+     * Constructs the MembershipService and initializes its DAO.
+     */
     public MembershipService() {
         this.membershipDAO = new MembershipDAO();
     }
 
-    // Add Membership
+    /**
+     * Adds a new membership after validating cost and member ID.
+     *
+     * @param membership Membership to add
+     * @return true if added successfully, false otherwise
+     */
     public boolean addMembership(Membership membership) {
         if (membership.getMembershipCost() <= 0) {
             logger.warning("Error: Membership cost must be greater than 0.");
@@ -36,7 +43,12 @@ public class MembershipService {
         return result;
     }
 
-    // Get Membership by ID
+    /**
+     * Retrieves a membership by ID.
+     *
+     * @param membershipId Membership ID to search
+     * @return Membership object or null if not found
+     */
     public Membership getMembershipById(int membershipId) {
         Membership membership = membershipDAO.getMembershipById(membershipId);
         if (membership == null) {
@@ -45,7 +57,11 @@ public class MembershipService {
         return membership;
     }
 
-    // Get All Memberships
+    /**
+     * Retrieves all memberships in the system.
+     *
+     * @return List of Membership objects
+     */
     public List<Membership> getAllMemberships() {
         List<Membership> memberships = membershipDAO.getAllMemberships();
         if (memberships.isEmpty()) {
@@ -54,7 +70,12 @@ public class MembershipService {
         return memberships;
     }
 
-    // Update Membership
+    /**
+     * Updates an existing membership after validation.
+     *
+     * @param membership Updated membership object
+     * @return true if successful, false otherwise
+     */
     public boolean updateMembership(Membership membership) {
         if (membership.getMembershipCost() <= 0) {
             logger.warning("Error: Membership cost must be greater than 0.");
@@ -71,7 +92,12 @@ public class MembershipService {
         return result;
     }
 
-    // Delete Membership
+    /**
+     * Deletes a membership by ID if it exists.
+     *
+     * @param membershipId ID of the membership to delete
+     * @return true if deleted successfully, false otherwise
+     */
     public boolean deleteMembership(int membershipId) {
         if (membershipDAO.getMembershipById(membershipId) == null) {
             logger.warning("Error: Membership not found. Cannot delete.");
@@ -84,7 +110,11 @@ public class MembershipService {
         return result;
     }
 
-    // Get Total Revenue
+    /**
+     * Returns the total revenue generated from all memberships.
+     *
+     * @return Total revenue as a double
+     */
     public double getTotalRevenue() {
         double totalRevenue = membershipDAO.getTotalRevenue();
         if (totalRevenue == 0) {
