@@ -1,4 +1,9 @@
-import java.sql.*;//Connection, DeviceManager, SQLExceptions
+package com.group7.gym;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+
 public class DatabaseConnection{
     private static final String url = "jdbc:postgresql://localhost:5432/postgres";
     private static final String user = "postgres";
