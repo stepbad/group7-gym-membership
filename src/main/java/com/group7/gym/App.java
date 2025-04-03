@@ -4,6 +4,7 @@ import com.group7.gym.dao.UserDAO;
 import com.group7.gym.models.User;
 import com.group7.gym.models.Admin;
 import com.group7.gym.service.AdminService;
+import com.group7.gym.service.TrainerService;
 import com.group7.gym.utils.PasswordUtils;
 
 import java.sql.SQLException;
@@ -63,7 +64,7 @@ public class App {
                 showAdminMenu(scanner);
                 break;
             case "trainer":
-                System.out.println("Trainer menu not yet implemented.");
+                showTrainerMenu(user, scanner);
                 break;
             case "member":
                 System.out.println("Member menu not yet implemented.");
@@ -107,6 +108,42 @@ public class App {
                     break;
                 case 3:
                     System.out.println("Feature coming soon: View Memberships & Revenue");
+                    break;
+                case 4:
+                    System.out.println("Logging out...");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        }
+    }
+
+    private static void showTrainerMenu(User trainer, Scanner scanner) {
+        TrainerService trainerService = new TrainerService();
+
+        while (true) {
+            System.out.println("\n--- Trainer Menu ---");
+            System.out.println("1. View My Profile");
+            System.out.println("2. View Assigned Classes");
+            System.out.println("3. Assign Class to Myself");
+            System.out.println("4. Logout");
+            System.out.print("Choose an option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    trainerService.viewTrainer(trainer.getUserId());
+                    break;
+                case 2:
+                    trainerService.viewAssignedClasses(trainer.getUserId());
+                    break;
+                case 3:
+                    System.out.print("Enter class ID to assign: ");
+                    int classId = scanner.nextInt();
+                    scanner.nextLine();
+                    trainerService.assignToClass(classId, trainer.getUserId());
                     break;
                 case 4:
                     System.out.println("Logging out...");
