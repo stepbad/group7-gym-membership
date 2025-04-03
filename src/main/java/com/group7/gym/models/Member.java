@@ -1,52 +1,92 @@
 package com.group7.gym.models;
 
 /**
- * Member class - inherits from User and adds membership-specific attributes
+ * Represents a gym member, inheriting from User.
+ * Members have a membership ID and track total expenses.
  */
 public class Member extends User {
 
+    /** ID of the associated membership type (e.g., Basic, Standard, Premium). */
     private int membershipId;
+
+    /** Total expenses accumulated by the member. */
     private double totalMembershipExpenses;
 
-    // Constructors
-
+    /**
+     * Default constructor.
+     */
     public Member() {
-        // Default constructor
     }
 
+    /**
+     * Full constructor for creating a Member object.
+     *
+     * @param userId                  Unique user ID
+     * @param username                Member's username
+     * @param passwordHash            Hashed password
+     * @param email                   Member's email address
+     * @param phone                   Member's phone number
+     * @param address                 Member's physical address
+     * @param membershipId            ID of the associated membership plan
+     * @param totalMembershipExpenses Total expenses incurred by the member
+     */
     public Member(int userId, String username, String passwordHash, String email, String phone, String address,
                   int membershipId, double totalMembershipExpenses) {
-        super(userId, username, passwordHash, email, phone, address, "member"); // Role set to 'member'
+        super(userId, username, passwordHash, email, phone, address, "member"); // Role is set to 'member'
         this.membershipId = membershipId;
         this.totalMembershipExpenses = totalMembershipExpenses;
     }
 
-    // Getters and Setters
-
+    /**
+     * Gets the member's membership ID.
+     *
+     * @return Membership ID
+     */
     public int getMembershipId() {
         return membershipId;
     }
 
+    /**
+     * Sets the membership ID.
+     *
+     * @param membershipId New membership ID
+     */
     public void setMembershipId(int membershipId) {
         this.membershipId = membershipId;
     }
 
+    /**
+     * Gets the total membership expenses.
+     *
+     * @return Total amount spent
+     */
     public double getTotalMembershipExpenses() {
         return totalMembershipExpenses;
     }
 
+    /**
+     * Sets the total membership expenses.
+     *
+     * @param totalMembershipExpenses Total expenses value
+     */
     public void setTotalMembershipExpenses(double totalMembershipExpenses) {
         this.totalMembershipExpenses = totalMembershipExpenses;
     }
 
-    // Method to add membership expenses
-
+    /**
+     * Adds a charge to the member’s total expenses.
+     *
+     * @param amount Amount to add
+     */
     public void addMembershipExpense(double amount) {
         this.totalMembershipExpenses += amount;
     }
 
-    // toString Method
-
+    /**
+     * Returns a string representation of the member object.
+     *
+     * @return String with member details
+     */
     @Override
     public String toString() {
         return "Member{" +
