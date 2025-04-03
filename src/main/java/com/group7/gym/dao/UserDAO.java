@@ -8,6 +8,7 @@ import com.group7.gym.models.Admin;
 import com.group7.gym.models.Member;
 import com.group7.gym.models.Trainer;
 import com.group7.gym.models.User;
+import com.group7.gym.DatabaseConnection;
 
 public class UserDAO {
     private Connection conn;
@@ -32,7 +33,10 @@ public class UserDAO {
 
     // READ: Get one user by email (for login)
     public User getUserByEmail(String email) throws SQLException {
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = "SELECT users.*, memberships.membership_id AS membership_id, memberships.price AS balance " +
+                "FROM users " +
+                "LEFT JOIN memberships ON users.user_id = memberships.user_id " +
+                "WHERE users.email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
@@ -46,7 +50,10 @@ public class UserDAO {
     // READ: Get all users
     public List<User> getAllUsers() throws SQLException {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM users";
+        String sql = "SELECT \"users\".*, \"memberships\".\"id\" AS membership_id, \"memberships\".\"price\" AS balance " +
+                "FROM \"users\" " +
+                "LEFT JOIN \"memberships\" ON \"users\".\"id\" = \"memberships\".\"user_id\" " +
+                "WHERE \"users\".\"email\" = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -90,15 +97,22 @@ public class UserDAO {
         String address = rs.getString("address");
         String role = rs.getString("role");
 
+        if (role == null) {
+            return null; // Or throw an exception
+        }
+
         switch (role.toLowerCase()) {
             case "admin":
-                return new Admin(id, password, email, phone, address); // uses existing constructor
+                return new Admin(id, username, password, email, phone, address); // ✅ FIXED
             case "trainer":
                 return new Trainer(id, username, password, email, phone, address);
             case "member":
-                return new Member(id, username, password, email, phone, address, 0, 0.0); // dummy data
+                int membershipId = rs.getInt("membership_id"); // ✅ Fetching actual values
+                double balance = rs.getDouble("balance");
+                return new Member(id, username, password, email, phone, address, membershipId, balance);
             default:
                 return null;
         }
     }
+
 }
