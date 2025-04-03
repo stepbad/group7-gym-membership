@@ -4,12 +4,16 @@ package com.group7.gym.models;
 
     public class Admin extends User {
         
-        public Admin(int i, String string, String string2, String string3, String string4, String string5) {
-            super();
-            this.role = "Admin";
-        }
+//        public Admin(int i, String string, String string2, String string3, String string4, String string5) {
+//            super();
+//            this.role = "Admin";
+//        }
+//
+//        public Admin(int userId, String passwordHash, String email, String phone, String address) {
+//            super(userId, username, passwordHash, email, phone, address, "Admin");
+//        }
 
-        public Admin(int userId, String passwordHash, String email, String phone, String address) {
+        public Admin(int userId, String username, String passwordHash, String email, String phone, String address) {
             super(userId, username, passwordHash, email, phone, address, "Admin");
         }
 
@@ -42,12 +46,12 @@ package com.group7.gym.models;
         @Override
         public String toString() {
             return "Admin{" +
-                    "userId=" + userId +
-                    ", username=" + username + '\'' +
-                    ", email=" + email + '\'' +
-                    ", phone=" + phone + '\'' +
-                    ", address=" + address + '\'' +
-                    ", role=" + role +
+                    "userId=" + getUserId() +
+                    ", username=" + getUsername() +
+                    ", email=" + getEmail() +
+                    ", phone=" + getPhone() +
+                    ", address=" + getAddress() +
+                    ", role=" + getRole() +
                     '}';
         }
 
