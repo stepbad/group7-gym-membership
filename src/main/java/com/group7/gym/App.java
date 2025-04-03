@@ -2,11 +2,10 @@ package com.group7.gym;
 
 import com.group7.gym.dao.UserDAO;
 import com.group7.gym.models.User;
+import com.group7.gym.models.Admin;
 import com.group7.gym.service.AdminService;
-import com.group7.gym.dao.AdminDAO;
 import com.group7.gym.utils.PasswordUtils;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
@@ -17,11 +16,6 @@ import java.util.Scanner;
  */
 public class App {
 
-    /**
-     * Launches the application.
-     *
-     * @param args command-line arguments (not used)
-     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         UserDAO userDAO = new UserDAO();
@@ -63,67 +57,56 @@ public class App {
         scanner.close();
     }
 
-    /**
-     * Displays a role-specific menu after successful login.
-     *
-     * @param user The logged-in user
-     * @param scanner Scanner object for input
-     */
     private static void loadRoleBasedMenu(User user, Scanner scanner) {
         switch (user.getRole().toLowerCase()) {
             case "admin":
                 showAdminMenu(scanner);
                 break;
             case "trainer":
-                System.out.println("Trainer options: Manage Workout Classes, View Members, etc.");
+                System.out.println("Trainer menu not yet implemented.");
                 break;
             case "member":
-                System.out.println("Member options: View Classes, Book Sessions, etc.");
+                System.out.println("Member menu not yet implemented.");
                 break;
             default:
                 System.out.println("Unknown role. Contact support.");
         }
     }
 
-    /**
-     * Displays the admin menu with options.
-     *
-     * @param scanner Scanner for input
-     */
     private static void showAdminMenu(Scanner scanner) {
         AdminService adminService = new AdminService();
 
         while (true) {
             System.out.println("\n--- Admin Menu ---");
-            System.out.println("1. View All Users");
-            System.out.println("2. Delete User by ID");
-            System.out.println("3. View Memberships & Revenue");
+            System.out.println("1. View All Admins");
+            System.out.println("2. Delete Admin by ID");
+            System.out.println("3. View Memberships & Revenue (coming soon)");
             System.out.println("4. Logout");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
-                    List<User> users = adminService.getAllUsers();
-                    if (users.isEmpty()) {
-                        System.out.println("No users found.");
+                    List<Admin> admins = adminService.getAllAdmins();
+                    if (admins.isEmpty()) {
+                        System.out.println("No admins found.");
                     } else {
-                        for (User u : users) {
-                            System.out.println(u);
+                        for (Admin a : admins) {
+                            System.out.println(a);
                         }
                     }
                     break;
                 case 2:
-                    System.out.print("Enter user ID to delete: ");
+                    System.out.print("Enter admin ID to delete: ");
                     int id = scanner.nextInt();
                     scanner.nextLine();
-                    boolean deleted = adminService.deleteUserById(id);
-                    System.out.println(deleted ? "User deleted." : "User not found or error occurred.");
+                    boolean deleted = adminService.deleteAdmin(id);
+                    System.out.println(deleted ? "Admin deleted." : "Admin not found or error occurred.");
                     break;
                 case 3:
-                    adminService.viewMembershipsAndRevenue();
+                    System.out.println("Feature coming soon: View Memberships & Revenue");
                     break;
                 case 4:
                     System.out.println("Logging out...");
