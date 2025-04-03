@@ -7,15 +7,27 @@ import java.util.List;
 import com.group7.gym.dao.WorkoutClassDAO;
 import com.group7.gym.models.WorkoutClass;
 
+/**
+ * Service layer for managing workout class operations.
+ */
 public class WorkoutClassService {
 
     private WorkoutClassDAO workoutClassDAO;
 
+    /**
+     * Constructs the service using a DB connection.
+     *
+     * @param conn Active DB connection
+     */
     public WorkoutClassService(Connection conn) {
         this.workoutClassDAO = new WorkoutClassDAO(conn);
     }
 
-    // CREATE
+    /**
+     * Creates a new workout class.
+     *
+     * @param workoutClass WorkoutClass to create
+     */
     public void createWorkoutClass(WorkoutClass workoutClass) {
         try {
             workoutClassDAO.addWorkoutClass(workoutClass);
@@ -25,7 +37,9 @@ public class WorkoutClassService {
         }
     }
 
-    // READ ALL
+    /**
+     * Lists all workout classes in the system.
+     */
     public void listAllWorkoutClasses() {
         try {
             List<WorkoutClass> classList = workoutClassDAO.getAllWorkoutClasses();
@@ -41,7 +55,11 @@ public class WorkoutClassService {
         }
     }
 
-    // READ ONE
+    /**
+     * Displays details of a workout class by ID.
+     *
+     * @param classId Class ID to look up
+     */
     public void getWorkoutClassDetails(int classId) {
         try {
             WorkoutClass wc = workoutClassDAO.getWorkoutClassById(classId);
@@ -56,7 +74,11 @@ public class WorkoutClassService {
         }
     }
 
-    // UPDATE
+    /**
+     * Updates an existing workout class.
+     *
+     * @param updatedClass WorkoutClass with new values
+     */
     public void updateWorkoutClass(WorkoutClass updatedClass) {
         try {
             workoutClassDAO.updateWorkoutClass(updatedClass);
@@ -66,7 +88,11 @@ public class WorkoutClassService {
         }
     }
 
-    // DELETE
+    /**
+     * Deletes a workout class by ID.
+     *
+     * @param classId Class ID to delete
+     */
     public void deleteWorkoutClass(int classId) {
         try {
             workoutClassDAO.deleteWorkoutClass(classId);
