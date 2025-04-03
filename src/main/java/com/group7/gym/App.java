@@ -5,6 +5,8 @@ import com.group7.gym.models.User;
 import com.group7.gym.models.Admin;
 import com.group7.gym.service.AdminService;
 import com.group7.gym.service.TrainerService;
+import com.group7.gym.service.MemberService;
+import com.group7.gym.service.MembershipService;
 import com.group7.gym.utils.PasswordUtils;
 
 import java.sql.SQLException;
@@ -67,7 +69,7 @@ public class App {
                 showTrainerMenu(user, scanner);
                 break;
             case "member":
-                System.out.println("Member menu not yet implemented.");
+                showMemberMenu(user, scanner);
                 break;
             default:
                 System.out.println("Unknown role. Contact support.");
@@ -144,6 +146,46 @@ public class App {
                     int classId = scanner.nextInt();
                     scanner.nextLine();
                     trainerService.assignToClass(classId, trainer.getUserId());
+                    break;
+                case 4:
+                    System.out.println("Logging out...");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        }
+    }
+
+    private static void showMemberMenu(User member, Scanner scanner) {
+        MemberService memberService = new MemberService();
+        MembershipService membershipService = new MembershipService();
+
+        while (true) {
+            System.out.println("\n--- Member Menu ---");
+            System.out.println("1. View My Profile");
+            System.out.println("2. View My Membership");
+            System.out.println("3. View Available Classes (coming soon)");
+            System.out.println("4. Logout");
+            System.out.print("Choose an option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    memberService.viewMember(member.getUserId());
+                    break;
+                case 2:
+                    membershipService.getAllMemberships().stream()
+                        .filter(m -> m.getMemberId() == member.getUserId())
+                        .findFirst()
+                        .ifPresentOrElse(
+                            System.out::println,
+                            () -> System.out.println("No membership found for this member.")
+                        );
+                    break;
+                case 3:
+                    System.out.println("Feature coming soon: Browse Available Classes");
                     break;
                 case 4:
                     System.out.println("Logging out...");
