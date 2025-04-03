@@ -1,36 +1,33 @@
 package com.group7.gym.dao;
 
+import com.group7.gym.DatabaseConnection;
 import com.group7.gym.models.Member;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
- * DAO class for managing Member database operations.
+ * DAO class for managing Member-related database operations.
  */
 public class MemberDAO {
-    private Connection conn;
 
-    /**
-     * Constructs a MemberDAO with the provided database connection.
-     *
-     * @param conn Active database connection
-     */
-    public MemberDAO(Connection conn) {
-        this.conn = conn;
-    }
+    private static final Logger logger = Logger.getLogger(MemberDAO.class.getName());
 
     /**
      * Adds a new member to the database.
      *
-     * @param member Member to add
+     * @param member Member object to add
      * @throws SQLException if a database error occurs
      */
     public void addMember(Member member) throws SQLException {
         String sql = "INSERT INTO users (username, password, email, phone, address, role, membership_id, total_membership_expenses) " +
                      "VALUES (?, ?, ?, ?, ?, 'member', ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, member.getUsername());
             stmt.setString(2, member.getPasswordHash());
             stmt.setString(3, member.getEmail());
@@ -51,18 +48,21 @@ public class MemberDAO {
     public List<Member> getAllMembers() throws SQLException {
         List<Member> members = new ArrayList<>();
         String sql = "SELECT * FROM users WHERE role = 'member'";
-        try (PreparedStatement stmt = conn.prepareStatement(sql);
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
                 Member member = new Member(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    rs.getString("password"),
-                    rs.getString("email"),
-                    rs.getString("phone"),
-                    rs.getString("address"),
-                    rs.getInt("membership_id"),
-                    rs.getDouble("total_membership_expenses")
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address"),
+                        rs.getInt("membership_id"),
+                        rs.getDouble("total_membership_expenses")
                 );
                 members.add(member);
             }
@@ -71,27 +71,31 @@ public class MemberDAO {
     }
 
     /**
-     * Retrieves a member by their ID.
+     * Retrieves a member by their user ID.
      *
-     * @param memberId Member user ID
+     * @param memberId ID of the member
      * @return Member object or null if not found
      * @throws SQLException if a database error occurs
      */
     public Member getMemberById(int memberId) throws SQLException {
         String sql = "SELECT * FROM users WHERE user_id = ? AND role = 'member'";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, memberId);
             ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) {
                 return new Member(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    rs.getString("password"),
-                    rs.getString("email"),
-                    rs.getString("phone"),
-                    rs.getString("address"),
-                    rs.getInt("membership_id"),
-                    rs.getDouble("total_membership_expenses")
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address"),
+                        rs.getInt("membership_id"),
+                        rs.getDouble("total_membership_expenses")
                 );
             }
         }
@@ -99,15 +103,18 @@ public class MemberDAO {
     }
 
     /**
-     * Updates an existing member in the database.
+     * Updates a member's record in the database.
      *
-     * @param member Member with updated values
+     * @param member Member object with updated values
      * @throws SQLException if a database error occurs
      */
     public void updateMember(Member member) throws SQLException {
         String sql = "UPDATE users SET username = ?, password = ?, email = ?, phone = ?, address = ?, " +
                      "membership_id = ?, total_membership_expenses = ? WHERE user_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, member.getUsername());
             stmt.setString(2, member.getPasswordHash());
             stmt.setString(3, member.getEmail());
@@ -128,7 +135,10 @@ public class MemberDAO {
      */
     public void deleteMember(int memberId) throws SQLException {
         String sql = "DELETE FROM users WHERE user_id = ? AND role = 'member'";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, memberId);
             stmt.executeUpdate();
         }
