@@ -1,34 +1,28 @@
-//package com.group7.gym;
-//
-//
-///**
-// * Hello world!
-// * Connection conn = DBConnection.getConnection();
-// * TrainerService trainerService = new TrainerService(conn);
-// */
-//public class App
-//{
-//    public static void main( String[] args )
-//    {
-//        System.out.println( "this could be our main menu interface!" );
-//    }
-//}
-
-
 package com.group7.gym;
 
 import com.group7.gym.dao.UserDAO;
 import com.group7.gym.models.User;
+import com.group7.gym.utils.PasswordUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+/**
+ * Main entry point for the Gym Management System.
+ * Handles user login and routes users to role-based interfaces.
+ */
 public class App {
+
+    /**
+     * Launches the application.
+     *
+     * @param args command-line arguments (not used)
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Connection conn = DatabaseConnection.getcon();
-        UserDAO userDAO = new UserDAO(conn);
+        Connection conn = DatabaseConnection.getConnection();
+        UserDAO userDAO = new UserDAO();
 
         System.out.println("Welcome to Gym Management System!");
 
@@ -47,7 +41,7 @@ public class App {
 
                 try {
                     User user = userDAO.getUserByEmail(email);
-                    if (user != null && user.getPasswordHash().equals(password)) {
+                    if (user != null && PasswordUtils.checkPassword(password, user.getPasswordHash())) {
                         System.out.println("Login Successful! Welcome, " + user.getUsername());
                         loadRoleBasedMenu(user);
                     } else {
@@ -67,6 +61,11 @@ public class App {
         scanner.close();
     }
 
+    /**
+     * Displays a role-specific menu after successful login.
+     *
+     * @param user The logged-in user
+     */
     private static void loadRoleBasedMenu(User user) {
         System.out.println("\nLoading " + user.getRole() + " menu...");
         switch (user.getRole().toLowerCase()) {
@@ -84,4 +83,3 @@ public class App {
         }
     }
 }
-
