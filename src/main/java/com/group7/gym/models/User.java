@@ -1,10 +1,9 @@
 package com.group7.gym.models;
 
 /**
- * Abstract User class – base for Admin, Trainer, and Member
+ * Abstract base class for all users in the system (Admin, Trainer, Member).
  */
 public abstract class User {
-
     protected int userId;
     protected String username;
     protected String passwordHash;
@@ -13,12 +12,14 @@ public abstract class User {
     protected String address;
     protected String role;
 
-    // --- Constructors ---
+    /**
+     * Default constructor.
+     */
+    public User() {}
 
-    public User() {
-        // default constructor
-    }
-
+    /**
+     * Full constructor to initialize a User object.
+     */
     public User(int userId, String username, String passwordHash, String email, String phone, String address, String role) {
         this.userId = userId;
         this.username = username;
@@ -29,65 +30,27 @@ public abstract class User {
         this.role = role;
     }
 
-    // --- Getters and Setters ---
+    // Getters and Setters
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
 
-    public int getUserId() {
-        return userId;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-    public String getUsername() {
-        return username;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
-    public String getPasswordHash() {
-        return passwordHash;
-    }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    // --- toString for Debugging ---
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
     @Override
     public String toString() {
