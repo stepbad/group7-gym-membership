@@ -1,26 +1,28 @@
 package com.group7.gym.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.group7.gym.dao.UserDAO;
 import com.group7.gym.models.User;
 import com.group7.gym.utils.PasswordUtils;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Logger;
+
+/**
+ * Service class for user-related business logic.
+ */
 public class UserService {
-    private UserDAO userDAO;
+    private final UserDAO userDAO;
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
 
     public UserService(Connection conn) {
-        if (conn == null) {
-            throw new IllegalStateException("Database connection is null.");
-        }
         this.userDAO = new UserDAO(conn);
     }
 
+    /**
+     * Registers a new user after validation.
+     */
     public void registerUser(User user) {
         try {
             if (user.getEmail() == null || user.getPasswordHash() == null) {
@@ -28,30 +30,30 @@ public class UserService {
             }
 
             if (userDAO.getUserByEmail(user.getEmail()) != null) {
-                logger.log(Level.WARNING, "User already exists: " + user.getEmail());
-                System.out.println("Email is already registered.");
+                System.out.println("Email already registered.");
                 return;
             }
 
             userDAO.createNewUser(user);
             System.out.println("User registered successfully.");
-
         } catch (SQLException | IllegalArgumentException e) {
-            logger.log(Level.SEVERE, "Registration failed: " + e.getMessage());
+            logger.severe("Registration failed: " + e.getMessage());
         }
     }
 
+    /**
+     * Logs in a user by checking password hash.
+     */
     public User loginUser(String email, String passwordPlaintext) {
         try {
             User user = userDAO.getUserByEmail(email);
             if (user != null && PasswordUtils.checkPassword(passwordPlaintext, user.getPasswordHash())) {
-                logger.log(Level.INFO, "Login successful: " + email);
+                logger.info("Login successful: " + email);
                 return user;
-            } else {
-                System.out.println("Invalid email or password.");
             }
+            System.out.println("Invalid credentials.");
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Login failed: " + e.getMessage());
+            logger.severe("Login failed: " + e.getMessage());
         }
         return null;
     }
@@ -59,11 +61,9 @@ public class UserService {
     public void listAllUsers() {
         try {
             List<User> users = userDAO.getAllUsers();
-            for (User u : users) {
-                System.out.println(u);
-            }
+            users.forEach(System.out::println);
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error retrieving users: " + e.getMessage());
+            logger.severe("Error retrieving users: " + e.getMessage());
         }
     }
 
@@ -72,7 +72,7 @@ public class UserService {
             userDAO.updateUser(user);
             System.out.println("User updated.");
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error updating user: " + e.getMessage());
+            logger.severe("Error updating user: " + e.getMessage());
         }
     }
 
@@ -81,7 +81,7 @@ public class UserService {
             userDAO.deleteUserById(userId);
             System.out.println("User deleted.");
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error deleting user: " + e.getMessage());
+            logger.severe("Error deleting user: " + e.getMessage());
         }
     }
 }
