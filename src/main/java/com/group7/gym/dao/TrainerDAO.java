@@ -1,26 +1,20 @@
 package com.group7.gym.dao;
 
+import com.group7.gym.DatabaseConnection;
+import com.group7.gym.models.Trainer;
+import com.group7.gym.models.WorkoutClass;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.group7.gym.models.Trainer;
-import com.group7.gym.models.WorkoutClass;
+import java.util.logging.Logger;
 
 /**
  * DAO class for managing Trainer-related database operations.
  */
 public class TrainerDAO {
-    private Connection conn;
 
-    /**
-     * Constructs a TrainerDAO with the given database connection.
-     *
-     * @param conn Active database connection
-     */
-    public TrainerDAO(Connection conn) {
-        this.conn = conn;
-    }
+    private static final Logger logger = Logger.getLogger(TrainerDAO.class.getName());
 
     /**
      * Adds a new trainer to the database.
@@ -30,7 +24,10 @@ public class TrainerDAO {
      */
     public void addTrainer(Trainer trainer) throws SQLException {
         String sql = "INSERT INTO users (username, password, email, phone, address, role) VALUES (?, ?, ?, ?, ?, 'Trainer')";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, trainer.getUsername());
             stmt.setString(2, trainer.getPasswordHash());
             stmt.setString(3, trainer.getEmail());
@@ -49,16 +46,19 @@ public class TrainerDAO {
     public List<Trainer> getAllTrainers() throws SQLException {
         List<Trainer> trainers = new ArrayList<>();
         String sql = "SELECT * FROM users WHERE role = 'Trainer'";
-        try (PreparedStatement stmt = conn.prepareStatement(sql);
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
                 Trainer trainer = new Trainer(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    rs.getString("password"),
-                    rs.getString("email"),
-                    rs.getString("phone"),
-                    rs.getString("address")
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address")
                 );
                 trainers.add(trainer);
             }
@@ -69,23 +69,27 @@ public class TrainerDAO {
     /**
      * Retrieves a trainer by ID.
      *
-     * @param trainerId ID of the trainer
+     * @param trainerId Trainer's user ID
      * @return Trainer object or null if not found
      * @throws SQLException if a database error occurs
      */
     public Trainer getTrainerById(int trainerId) throws SQLException {
         String sql = "SELECT * FROM users WHERE user_id = ? AND role = 'Trainer'";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, trainerId);
             ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) {
                 return new Trainer(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    rs.getString("password"),
-                    rs.getString("email"),
-                    rs.getString("phone"),
-                    rs.getString("address")
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address")
                 );
             }
         }
@@ -93,14 +97,17 @@ public class TrainerDAO {
     }
 
     /**
-     * Updates trainer information in the database.
+     * Updates a trainer's information.
      *
-     * @param trainer Updated trainer object
+     * @param trainer Trainer object with updated values
      * @throws SQLException if a database error occurs
      */
     public void updateTrainer(Trainer trainer) throws SQLException {
         String sql = "UPDATE users SET username = ?, password = ?, email = ?, phone = ?, address = ? WHERE user_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, trainer.getUsername());
             stmt.setString(2, trainer.getPasswordHash());
             stmt.setString(3, trainer.getEmail());
@@ -114,12 +121,15 @@ public class TrainerDAO {
     /**
      * Deletes a trainer from the database.
      *
-     * @param trainerId ID of the trainer to delete
+     * @param trainerId Trainer user ID to delete
      * @throws SQLException if a database error occurs
      */
     public void deleteTrainer(int trainerId) throws SQLException {
         String sql = "DELETE FROM users WHERE user_id = ? AND role = 'Trainer'";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, trainerId);
             stmt.executeUpdate();
         }
@@ -136,16 +146,18 @@ public class TrainerDAO {
         List<WorkoutClass> classes = new ArrayList<>();
         String sql = "SELECT * FROM workout_classes WHERE trainer_id = ?";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, trainerId);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
                 classes.add(new WorkoutClass(
-                    rs.getInt("workout_class_id"),
-                    rs.getString("type"),
-                    rs.getString("description"),
-                    rs.getInt("trainer_id")
+                        rs.getInt("workout_class_id"),
+                        rs.getString("type"),
+                        rs.getString("description"),
+                        rs.getInt("trainer_id")
                 ));
             }
         }
@@ -153,15 +165,18 @@ public class TrainerDAO {
     }
 
     /**
-     * Assigns a trainer to a workout class by updating the trainer_id.
+     * Assigns a trainer to a workout class.
      *
-     * @param classId   ID of the class
-     * @param trainerId ID of the trainer
+     * @param classId   Workout class ID
+     * @param trainerId Trainer user ID
      * @throws SQLException if a database error occurs
      */
     public void assignTrainerToClass(int classId, int trainerId) throws SQLException {
         String sql = "UPDATE workout_classes SET trainer_id = ? WHERE workout_class_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, trainerId);
             stmt.setInt(2, classId);
             stmt.executeUpdate();
