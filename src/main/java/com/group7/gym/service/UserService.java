@@ -15,6 +15,9 @@ public class UserService {
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
 
     public UserService(Connection conn) {
+        if (conn == null) {
+            throw new IllegalStateException("Database connection is null.");
+        }
         this.userDAO = new UserDAO(conn);
     }
 
