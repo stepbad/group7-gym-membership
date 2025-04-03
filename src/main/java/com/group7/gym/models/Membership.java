@@ -1,22 +1,32 @@
 package com.group7.gym.models;
 
 /**
- * Membership class - Represents a gym membership with relevant details
+ * Represents a gym membership with cost, type, and association to a member.
  */
 public class Membership {
 
     private int membershipId;
-    private String membershipType;  // e.g., "Standard", "Premium"
-    private String membershipDescription;  // Description of the membership
-    private double membershipCost;  // Cost of the membership
-    private int memberId;  // ID of the member who holds this membership
+    private String membershipType;
+    private String membershipDescription;
+    private double membershipCost;
+    private int memberId;
 
-    // Constructors
-
+    /**
+     * Default constructor.
+     */
     public Membership() {
         // Default constructor
     }
 
+    /**
+     * Full constructor for creating a membership object.
+     *
+     * @param membershipId          Unique membership ID
+     * @param membershipType        Type of membership (e.g., Basic, Premium)
+     * @param membershipDescription Description of benefits/features
+     * @param membershipCost        Monthly cost of the membership
+     * @param memberId              ID of the member who holds this membership
+     */
     public Membership(int membershipId, String membershipType, String membershipDescription, double membershipCost, int memberId) {
         this.membershipId = membershipId;
         this.membershipType = membershipType;
@@ -24,8 +34,6 @@ public class Membership {
         this.membershipCost = membershipCost;
         this.memberId = memberId;
     }
-
-    // Getters and Setters
 
     public int getMembershipId() {
         return membershipId;
@@ -67,7 +75,11 @@ public class Membership {
         this.memberId = memberId;
     }
 
-    // toString Method
+    /**
+     * Returns a formatted string describing the membership.
+     *
+     * @return Membership summary string
+     */
     @Override
     public String toString() {
         return "Membership{" +
