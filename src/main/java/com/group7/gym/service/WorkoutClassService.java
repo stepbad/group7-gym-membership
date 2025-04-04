@@ -1,32 +1,29 @@
 package com.group7.gym.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-
 import com.group7.gym.dao.WorkoutClassDAO;
 import com.group7.gym.models.WorkoutClass;
 
+import java.sql.SQLException;
+import java.util.List;
+
 /**
- * Service layer for managing workout class operations.
+ * Service class for handling business logic related to workout classes.
  */
 public class WorkoutClassService {
 
     private WorkoutClassDAO workoutClassDAO;
 
     /**
-     * Constructs the service using a DB connection.
-     *
-     * @param conn Active DB connection
+     * Constructs a WorkoutClassService and initializes the DAO.
      */
-    public WorkoutClassService(Connection conn) {
-        this.workoutClassDAO = new WorkoutClassDAO(conn);
+    public WorkoutClassService() {
+        this.workoutClassDAO = new WorkoutClassDAO();
     }
 
     /**
      * Creates a new workout class.
      *
-     * @param workoutClass WorkoutClass to create
+     * @param workoutClass The WorkoutClass object to be added
      */
     public void createWorkoutClass(WorkoutClass workoutClass) {
         try {
@@ -38,7 +35,7 @@ public class WorkoutClassService {
     }
 
     /**
-     * Lists all workout classes in the system.
+     * Lists all workout classes.
      */
     public void listAllWorkoutClasses() {
         try {
@@ -56,9 +53,9 @@ public class WorkoutClassService {
     }
 
     /**
-     * Displays details of a workout class by ID.
+     * Retrieves and displays details for a workout class.
      *
-     * @param classId Class ID to look up
+     * @param classId ID of the class to retrieve
      */
     public void getWorkoutClassDetails(int classId) {
         try {
@@ -77,7 +74,7 @@ public class WorkoutClassService {
     /**
      * Updates an existing workout class.
      *
-     * @param updatedClass WorkoutClass with new values
+     * @param updatedClass The updated WorkoutClass object
      */
     public void updateWorkoutClass(WorkoutClass updatedClass) {
         try {
@@ -89,9 +86,9 @@ public class WorkoutClassService {
     }
 
     /**
-     * Deletes a workout class by ID.
+     * Deletes a workout class by its ID.
      *
-     * @param classId Class ID to delete
+     * @param classId ID of the class to delete
      */
     public void deleteWorkoutClass(int classId) {
         try {
