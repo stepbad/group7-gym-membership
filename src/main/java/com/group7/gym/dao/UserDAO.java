@@ -1,7 +1,7 @@
 package com.group7.gym.dao;
 
 import com.group7.gym.DatabaseConnection;
-import com.group7.gym.models.*;
+import com.group7.gym.models.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,6 +14,49 @@ import java.util.logging.Logger;
 public class UserDAO {
 
     private static final Logger logger = Logger.getLogger(UserDAO.class.getName());
+
+    /**
+     * Adds a new user to the database.
+     *
+     * @param user User to add
+     * @return true if successful
+     * @throws SQLException if a database error occurs
+     */
+    public boolean addUser(User user) throws SQLException {
+        String sql = "INSERT INTO users (username, password_hash, email, phone, address, role) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPasswordHash());
+            stmt.setString(3, user.getEmail());
+            stmt.setString(4, user.getPhone());
+            stmt.setString(5, user.getAddress());
+            stmt.setString(6, user.getRole());
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Updates an existing user's information.
+     *
+     * @param user Updated user object
+     * @return true if successful
+     * @throws SQLException if a database error occurs
+     */
+    public boolean updateUser(User user) throws SQLException {
+        String sql = "UPDATE users SET username = ?, password_hash = ?, email = ?, phone = ?, address = ?, role = ? WHERE user_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPasswordHash());
+            stmt.setString(3, user.getEmail());
+            stmt.setString(4, user.getPhone());
+            stmt.setString(5, user.getAddress());
+            stmt.setString(6, user.getRole());
+            stmt.setInt(7, user.getUserId());
+            return stmt.executeUpdate() > 0;
+        }
+    }
 
     /**
      * Retrieves all users from the database.
@@ -29,7 +72,16 @@ public class UserDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                users.add(createUserFromResultSet(rs));
+                User user = new User(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password_hash"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address"),
+                        rs.getString("role")
+                );
+                users.add(user);
             }
 
         } catch (SQLException e) {
@@ -55,7 +107,15 @@ public class UserDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return createUserFromResultSet(rs);
+                return new User(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password_hash"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address"),
+                        rs.getString("role")
+                );
             }
         }
         return null;
@@ -69,6 +129,8 @@ public class UserDAO {
      */
     public User getUserById(int userId) {
         String sql = "SELECT * FROM users WHERE user_id = ?";
+        User user = null;
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -76,14 +138,22 @@ public class UserDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return createUserFromResultSet(rs);
+                user = new User(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password_hash"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address"),
+                        rs.getString("role")
+                );
             }
 
         } catch (SQLException e) {
             logger.severe("Error retrieving user by ID: " + e.getMessage());
         }
 
-        return null;
+        return user;
     }
 
     /**
@@ -111,49 +181,5 @@ public class UserDAO {
         }
 
         return false;
-    }
-
-    /**
-     * Creates a specific User subtype (Admin, Trainer, Member) based on role field.
-     *
-     * @param rs ResultSet with user data
-     * @return A User object (Admin, Trainer, or Member)
-     * @throws SQLException if field access fails
-     */
-    private User createUserFromResultSet(ResultSet rs) throws SQLException {
-        String role = rs.getString("role").toLowerCase();
-        switch (role) {
-            case "admin":
-                return new Admin(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    rs.getString("password"),
-                    rs.getString("email"),
-                    rs.getString("phone"),
-                    rs.getString("address")
-                );
-            case "trainer":
-                return new Trainer(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    rs.getString("password"),
-                    rs.getString("email"),
-                    rs.getString("phone"),
-                    rs.getString("address")
-                );
-            case "member":
-                return new Member(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    rs.getString("password"),
-                    rs.getString("email"),
-                    rs.getString("phone"),
-                    rs.getString("address"),
-                    rs.getInt("membership_id"),
-                    rs.getDouble("total_membership_expenses")
-                );
-            default:
-                return null;
-        }
     }
 }

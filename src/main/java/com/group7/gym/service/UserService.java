@@ -4,24 +4,29 @@ import com.group7.gym.dao.UserDAO;
 import com.group7.gym.models.User;
 import com.group7.gym.utils.PasswordUtils;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Service class for user-related business logic.
+ * Service class for managing business logic related to users.
  */
 public class UserService {
-    private final UserDAO userDAO;
-    private static final Logger logger = Logger.getLogger(UserService.class.getName());
 
-    public UserService(Connection conn) {
-        this.userDAO = new UserDAO(conn);
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
+    private final UserDAO userDAO;
+
+    /**
+     * Constructs the UserService and initializes the DAO.
+     */
+    public UserService() {
+        this.userDAO = new UserDAO();
     }
 
     /**
      * Registers a new user after validation.
+     *
+     * @param user User to register
      */
     public void registerUser(User user) {
         try {
@@ -34,7 +39,7 @@ public class UserService {
                 return;
             }
 
-            userDAO.createNewUser(user);
+            userDAO.addUser(user);
             System.out.println("User registered successfully.");
         } catch (SQLException | IllegalArgumentException e) {
             logger.severe("Registration failed: " + e.getMessage());
@@ -43,6 +48,10 @@ public class UserService {
 
     /**
      * Logs in a user by checking password hash.
+     *
+     * @param email Email of the user
+     * @param passwordPlaintext Plaintext password
+     * @return Authenticated User object or null
      */
     public User loginUser(String email, String passwordPlaintext) {
         try {
@@ -58,15 +67,25 @@ public class UserService {
         return null;
     }
 
+    /**
+     * Lists all users in the system.
+     */
     public void listAllUsers() {
-        try {
-            List<User> users = userDAO.getAllUsers();
-            users.forEach(System.out::println);
-        } catch (SQLException e) {
-            logger.severe("Error retrieving users: " + e.getMessage());
+        List<User> users = userDAO.getAllUsers();
+        if (users.isEmpty()) {
+            System.out.println("No users found.");
+        } else {
+            for (User user : users) {
+                System.out.println(user);
+            }
         }
     }
 
+    /**
+     * Updates user details.
+     *
+     * @param user Updated user object
+     */
     public void updateUser(User user) {
         try {
             userDAO.updateUser(user);
@@ -76,12 +95,17 @@ public class UserService {
         }
     }
 
+    /**
+     * Deletes a user by ID.
+     *
+     * @param userId ID of the user to delete
+     */
     public void deleteUser(int userId) {
-        try {
-            userDAO.deleteUserById(userId);
-            System.out.println("User deleted.");
-        } catch (SQLException e) {
-            logger.severe("Error deleting user: " + e.getMessage());
+        boolean success = userDAO.deleteUser(userId);
+        if (success) {
+            System.out.println("User deleted successfully.");
+        } else {
+            System.out.println("User not found or could not be deleted.");
         }
     }
 }
