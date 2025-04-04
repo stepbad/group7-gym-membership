@@ -1,27 +1,30 @@
 package com.group7.gym.dao;
 
+import com.group7.gym.DatabaseConnection;
+import com.group7.gym.models.Membership;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.group7.gym.models.Membership;
-
 /**
- * DAO class for managing Membership-related database operations
+ * DAO class for managing Membership-related database operations.
  */
 public class MembershipDAO {
 
     private static final Logger logger = Logger.getLogger(MembershipDAO.class.getName());
-    private final String url = "jdbc:postgresql://localhost:5432/gym_management";
-    private final String user = "postgres";
-    private final String password = "your_password"; // Replace with your actual password
 
-    // Add Membership
+    /**
+     * Adds a new membership to the database.
+     *
+     * @param membership Membership object to add
+     * @return true if successful, false otherwise
+     */
     public boolean addMembership(Membership membership) {
         String sql = "INSERT INTO memberships (membership_type, membership_description, membership_cost, member_id) VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, membership.getMembershipType());
@@ -30,30 +33,31 @@ public class MembershipDAO {
             stmt.setInt(4, membership.getMemberId());
 
             int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                logger.info("Membership added successfully.");
-                return true;
-            }
+            return affectedRows > 0;
 
         } catch (SQLException e) {
             logger.severe("Error adding membership: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
-    // Get Membership by ID
+    /**
+     * Retrieves a membership by ID.
+     *
+     * @param membershipId ID of the membership
+     * @return Membership object or null if not found
+     */
     public Membership getMembershipById(int membershipId) {
         String sql = "SELECT * FROM memberships WHERE membership_id = ?";
-        Membership membership = null;
 
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, membershipId);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                membership = new Membership(
+                return new Membership(
                         rs.getInt("membership_id"),
                         rs.getString("membership_type"),
                         rs.getString("membership_description"),
@@ -61,18 +65,23 @@ public class MembershipDAO {
                         rs.getInt("member_id")
                 );
             }
+
         } catch (SQLException e) {
             logger.severe("Error retrieving membership: " + e.getMessage());
         }
-        return membership;
+        return null;
     }
 
-    // Get All Memberships
+    /**
+     * Retrieves all memberships from the database.
+     *
+     * @return List of Membership objects
+     */
     public List<Membership> getAllMemberships() {
         List<Membership> memberships = new ArrayList<>();
         String sql = "SELECT * FROM memberships";
 
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -86,17 +95,23 @@ public class MembershipDAO {
                 );
                 memberships.add(membership);
             }
+
         } catch (SQLException e) {
-            logger.severe("Error retrieving all memberships: " + e.getMessage());
+            logger.severe("Error retrieving memberships: " + e.getMessage());
         }
         return memberships;
     }
 
-    // Update Membership
+    /**
+     * Updates an existing membership record in the database.
+     *
+     * @param membership Membership object with updated values
+     * @return true if successful, false otherwise
+     */
     public boolean updateMembership(Membership membership) {
         String sql = "UPDATE memberships SET membership_type = ?, membership_description = ?, membership_cost = ? WHERE membership_id = ?";
 
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, membership.getMembershipType());
@@ -105,44 +120,46 @@ public class MembershipDAO {
             stmt.setInt(4, membership.getMembershipId());
 
             int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                logger.info("Membership updated successfully.");
-                return true;
-            }
+            return affectedRows > 0;
 
         } catch (SQLException e) {
             logger.severe("Error updating membership: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
-    // Delete Membership
+    /**
+     * Deletes a membership from the database by ID.
+     *
+     * @param membershipId ID of the membership to delete
+     * @return true if deleted successfully, false otherwise
+     */
     public boolean deleteMembership(int membershipId) {
         String sql = "DELETE FROM memberships WHERE membership_id = ?";
 
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, membershipId);
-
             int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                logger.info("Membership deleted successfully.");
-                return true;
-            }
+            return affectedRows > 0;
 
         } catch (SQLException e) {
             logger.severe("Error deleting membership: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
-    // Get Total Revenue
+    /**
+     * Calculates total revenue from all memberships.
+     *
+     * @return Sum of all membership_cost values
+     */
     public double getTotalRevenue() {
         String sql = "SELECT SUM(membership_cost) AS total_revenue FROM memberships";
         double totalRevenue = 0.0;
 
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -153,6 +170,7 @@ public class MembershipDAO {
         } catch (SQLException e) {
             logger.severe("Error calculating total revenue: " + e.getMessage());
         }
+
         return totalRevenue;
     }
 }

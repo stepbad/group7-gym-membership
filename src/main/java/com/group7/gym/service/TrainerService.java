@@ -8,13 +8,26 @@ import com.group7.gym.dao.TrainerDAO;
 import com.group7.gym.models.Trainer;
 import com.group7.gym.models.WorkoutClass;
 
+/**
+ * Service class for trainer-related business logic.
+ */
 public class TrainerService {
     private TrainerDAO trainerDAO;
 
+    /**
+     * Constructs the service with a database connection.
+     *
+     * @param conn Active database connection
+     */
     public TrainerService(Connection conn) {
         this.trainerDAO = new TrainerDAO(conn);
     }
 
+    /**
+     * Registers a new trainer.
+     *
+     * @param trainer Trainer to register
+     */
     public void registerTrainer(Trainer trainer) {
         try {
             trainerDAO.addTrainer(trainer);
@@ -24,6 +37,9 @@ public class TrainerService {
         }
     }
 
+    /**
+     * Lists all registered trainers.
+     */
     public void listAllTrainers() {
         try {
             List<Trainer> trainers = trainerDAO.getAllTrainers();
@@ -39,6 +55,11 @@ public class TrainerService {
         }
     }
 
+    /**
+     * Displays a trainer's details by ID.
+     *
+     * @param trainerId Trainer ID
+     */
     public void viewTrainer(int trainerId) {
         try {
             Trainer t = trainerDAO.getTrainerById(trainerId);
@@ -52,6 +73,11 @@ public class TrainerService {
         }
     }
 
+    /**
+     * Updates a trainer’s information.
+     *
+     * @param trainer Updated trainer object
+     */
     public void updateTrainer(Trainer trainer) {
         try {
             trainerDAO.updateTrainer(trainer);
@@ -61,6 +87,11 @@ public class TrainerService {
         }
     }
 
+    /**
+     * Deletes a trainer by ID.
+     *
+     * @param trainerId ID of the trainer to delete
+     */
     public void deleteTrainer(int trainerId) {
         try {
             trainerDAO.deleteTrainer(trainerId);
@@ -70,6 +101,11 @@ public class TrainerService {
         }
     }
 
+    /**
+     * Displays all workout classes assigned to a trainer.
+     *
+     * @param trainerId Trainer ID
+     */
     public void viewAssignedClasses(int trainerId) {
         try {
             List<WorkoutClass> classes = trainerDAO.getAssignedClasses(trainerId);
@@ -85,6 +121,12 @@ public class TrainerService {
         }
     }
 
+    /**
+     * Assigns a trainer to a workout class.
+     *
+     * @param classId   Workout class ID
+     * @param trainerId Trainer ID
+     */
     public void assignToClass(int classId, int trainerId) {
         try {
             trainerDAO.assignTrainerToClass(classId, trainerId);
