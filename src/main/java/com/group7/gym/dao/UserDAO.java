@@ -1,7 +1,7 @@
 package com.group7.gym.dao;
 
 import com.group7.gym.DatabaseConnection;
-import com.group7.gym.models.User;
+import com.group7.gym.models.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -72,16 +72,7 @@ public class UserDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                User user = new User(
-                        rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("password_hash"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
-                        rs.getString("address"),
-                        rs.getString("role")
-                );
-                users.add(user);
+                users.add(buildUserFromResultSet(rs));
             }
 
         } catch (SQLException e) {
@@ -107,15 +98,7 @@ public class UserDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new User(
-                        rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("password_hash"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
-                        rs.getString("address"),
-                        rs.getString("role")
-                );
+                return buildUserFromResultSet(rs);
             }
         }
         return null;
@@ -129,7 +112,6 @@ public class UserDAO {
      */
     public User getUserById(int userId) {
         String sql = "SELECT * FROM users WHERE user_id = ?";
-        User user = null;
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -138,22 +120,14 @@ public class UserDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                user = new User(
-                        rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("password_hash"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
-                        rs.getString("address"),
-                        rs.getString("role")
-                );
+                return buildUserFromResultSet(rs);
             }
 
         } catch (SQLException e) {
             logger.severe("Error retrieving user by ID: " + e.getMessage());
         }
 
-        return user;
+        return null;
     }
 
     /**
@@ -181,5 +155,49 @@ public class UserDAO {
         }
 
         return false;
+    }
+
+    /**
+     * Builds a User object from a ResultSet using role-based instantiation.
+     *
+     * @param rs ResultSet with user data
+     * @return Concrete User object (Admin, Trainer, Member)
+     * @throws SQLException if a database access error occurs
+     */
+    private User buildUserFromResultSet(ResultSet rs) throws SQLException {
+        String role = rs.getString("role");
+        switch (role.toLowerCase()) {
+            case "admin":
+                return new Admin(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password_hash"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address")
+                );
+            case "trainer":
+                return new Trainer(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password_hash"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address")
+                );
+            case "member":
+                return new Member(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password_hash"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address"),
+                        0,
+                        0.0
+                );
+            default:
+                throw new IllegalArgumentException("Unknown role: " + role);
+        }
     }
 }

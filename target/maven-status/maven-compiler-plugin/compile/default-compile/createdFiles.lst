@@ -5,7 +5,9 @@ com/group7/gym/models/WorkoutClass.class
 com/group7/gym/service/TrainerService.class
 com/group7/gym/dao/TrainerDAO.class
 com/group7/gym/service/MemberService.class
+com/group7/gym/utils/PasswordUtils.class
 com/group7/gym/models/Membership.class
+com/group7/gym/service/WorkoutClassService.class
 com/group7/gym/service/MembershipService.class
 com/group7/gym/dao/MembershipDAO.class
 com/group7/gym/service/AdminService.class
@@ -16,3 +18,4 @@ com/group7/gym/models/Admin.class
 com/group7/gym/models/User.class
 com/group7/gym/dao/UserDAO.class
 com/group7/gym/models/Trainer.class
+com/group7/gym/service/UserService.class
