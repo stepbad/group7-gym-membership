@@ -18,8 +18,8 @@ public class MemberService {
      *
      * @param conn Active database connection
      */
-    public MemberService(Connection conn) {
-        this.memberDAO = new MemberDAO(conn);
+    public MemberService() {
+        this.memberDAO = new MemberDAO();
     }
 
     /**

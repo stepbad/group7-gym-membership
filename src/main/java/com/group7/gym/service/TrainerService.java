@@ -15,13 +15,12 @@ public class TrainerService {
     private TrainerDAO trainerDAO;
 
     /**
-     * Constructs the service with a database connection.
-     *
-     * @param conn Active database connection
+     * Default constructor initializes TrainerDAO with internal connection.
      */
-    public TrainerService(Connection conn) {
-        this.trainerDAO = new TrainerDAO(conn);
+    public TrainerService() {
+        this.trainerDAO = new TrainerDAO();
     }
+
 
     /**
      * Registers a new trainer.
