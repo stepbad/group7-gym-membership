@@ -7,6 +7,7 @@ import com.group7.gym.service.AdminService;
 import com.group7.gym.service.TrainerService;
 import com.group7.gym.service.MemberService;
 import com.group7.gym.service.MembershipService;
+import com.group7.gym.service.WorkoutClassService;
 import com.group7.gym.utils.PasswordUtils;
 
 import java.sql.SQLException;
@@ -122,13 +123,17 @@ public class App {
 
     private static void showTrainerMenu(User trainer, Scanner scanner) {
         TrainerService trainerService = new TrainerService();
+        WorkoutClassService workoutClassService = new WorkoutClassService();
 
         while (true) {
             System.out.println("\n--- Trainer Menu ---");
             System.out.println("1. View My Profile");
             System.out.println("2. View Assigned Classes");
-            System.out.println("3. Assign Class to Myself");
-            System.out.println("4. Logout");
+            System.out.println("3. Assign Existing Class");
+            System.out.println("4. Create New Class");
+            System.out.println("5. Update My Class");
+            System.out.println("6. Delete My Class");
+            System.out.println("7. Logout");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -143,11 +148,36 @@ public class App {
                     break;
                 case 3:
                     System.out.print("Enter class ID to assign: ");
-                    int classId = scanner.nextInt();
+                    int assignId = scanner.nextInt();
                     scanner.nextLine();
-                    trainerService.assignToClass(classId, trainer.getUserId());
+                    trainerService.assignToClass(assignId, trainer.getUserId());
                     break;
                 case 4:
+                    System.out.print("Enter class type: ");
+                    String type = scanner.nextLine();
+                    System.out.print("Enter class description: ");
+                    String desc = scanner.nextLine();
+                    workoutClassService.createWorkoutClass(
+                        new com.group7.gym.models.WorkoutClass(type, desc, trainer.getUserId()));
+                    break;
+                case 5:
+                    System.out.print("Enter class ID to update: ");
+                    int updateId = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter new type: ");
+                    String newType = scanner.nextLine();
+                    System.out.print("Enter new description: ");
+                    String newDesc = scanner.nextLine();
+                    workoutClassService.updateWorkoutClass(
+                        new com.group7.gym.models.WorkoutClass(updateId, newType, newDesc, trainer.getUserId()));
+                    break;
+                case 6:
+                    System.out.print("Enter class ID to delete: ");
+                    int deleteId = scanner.nextInt();
+                    scanner.nextLine();
+                    workoutClassService.deleteWorkoutClass(deleteId);
+                    break;
+                case 7:
                     System.out.println("Logging out...");
                     return;
                 default:
@@ -159,12 +189,13 @@ public class App {
     private static void showMemberMenu(User member, Scanner scanner) {
         MemberService memberService = new MemberService();
         MembershipService membershipService = new MembershipService();
+        WorkoutClassService workoutClassService = new WorkoutClassService();
 
         while (true) {
             System.out.println("\n--- Member Menu ---");
             System.out.println("1. View My Profile");
             System.out.println("2. View My Membership");
-            System.out.println("3. View Available Classes (coming soon)");
+            System.out.println("3. View Available Classes");
             System.out.println("4. Logout");
             System.out.print("Choose an option: ");
 
@@ -185,7 +216,7 @@ public class App {
                         );
                     break;
                 case 3:
-                    System.out.println("Feature coming soon: Browse Available Classes");
+                    workoutClassService.listAllWorkoutClasses();
                     break;
                 case 4:
                     System.out.println("Logging out...");
