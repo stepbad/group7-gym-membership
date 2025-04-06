@@ -95,10 +95,15 @@ public class MemberMenu {
             return;
         }
 
+        // Ask for membership type
+        System.out.print("Enter membership type (Gold, Silver, Platinum): ");
+        String membershipType = scanner.nextLine();
+
         // Creating and setting up the new membership
         Membership membership = new Membership();
         membership.setMemberId(member.getUserId());  // Set the member ID from the logged-in user
         membership.setMembershipCost(cost);  // Set the membership cost entered by the user
+        membership.setMembershipType(membershipType);
         membership.setStartDate(LocalDate.now());  // Set the start date to the current date
         membership.setEndDate(LocalDate.now().plusMonths(1));  // Set the end date to 1 month from now
 
