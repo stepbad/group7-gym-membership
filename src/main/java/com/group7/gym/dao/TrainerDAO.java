@@ -5,6 +5,8 @@ import com.group7.gym.models.Trainer;
 import com.group7.gym.models.WorkoutClass;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -153,14 +155,19 @@ public class TrainerDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                classes.add(new WorkoutClass(
+                WorkoutClass workoutClass = new WorkoutClass(
                         rs.getInt("workout_class_id"),
                         rs.getString("type"),
                         rs.getString("description"),
-                        rs.getInt("trainer_id")
-                ));
+                        rs.getInt("trainer_id"),
+                        rs.getTime("start_time").toLocalTime(),
+                        rs.getTime("end_time").toLocalTime(),
+                        rs.getDate("class_date").toLocalDate()
+                );
+                classes.add(workoutClass);
             }
         }
+
         return classes;
     }
 
