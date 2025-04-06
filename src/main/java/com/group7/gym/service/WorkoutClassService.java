@@ -1,8 +1,8 @@
 package com.group7.gym.service;
 
 import com.group7.gym.DatabaseConnection;
-import com.group7.gym.dao.WorkoutClassDAO;
-import com.group7.gym.models.WorkoutClass;
+import com.group7.gym.dao.*;
+import com.group7.gym.models.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -73,6 +73,18 @@ public class WorkoutClassService {
             System.err.println("Error retrieving workout class: " + e.getMessage());
         }
     }
+
+    /**
+ * Retrieves the list of members enrolled in a specific workout class.
+ *
+ * @param classId The ID of the workout class
+ * @return List of members enrolled in the class
+ */
+public List<Member> getClassRoster(int classId) {
+    MemberClassDAO memberClassDAO = new MemberClassDAO();
+    return memberClassDAO.getMembersByClassId(classId);
+}
+
 
     /**
  * Unassigns a trainer from a workout class by setting trainer_id to NULL.
