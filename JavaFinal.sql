@@ -23,8 +23,7 @@ CREATE TABLE memberships (
     membership_cost DECIMAL(10,2) NOT NULL,
     member_id INT REFERENCES users(user_id) ON DELETE CASCADE,
     start_date DATE DEFAULT CURRENT_DATE,
-    end_date DATE,
-    status VARCHAR(20)
+    end_date DATE
 );
 
 -- WORKOUT CLASSES TABLE
