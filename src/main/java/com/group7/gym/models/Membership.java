@@ -6,10 +6,10 @@ import java.time.LocalDate;
 public class Membership {
 
     private int membershipId;
-    private int memberId;
     private String membershipType;
     private String membershipDescription;
     private double membershipCost;
+    private int memberId;
 
     private LocalDate startDate;
     private LocalDate endDate;
@@ -22,8 +22,8 @@ public class Membership {
     }
 
     // Constructor to initialize all fields
-    public Membership(int membershipId, int memberId, String membershipType, String membershipDescription,
-                      double membershipCost, LocalDate startDate, LocalDate endDate) {
+    public Membership(int membershipId, String membershipType, String membershipDescription,
+                      double membershipCost, int memberId, LocalDate startDate, LocalDate endDate) {
         this.membershipId = membershipId;
         this.memberId = memberId;
         this.membershipType = membershipType;

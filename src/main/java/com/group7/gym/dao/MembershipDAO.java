@@ -22,6 +22,10 @@ public class MembershipDAO {
      * @return true if successful, false otherwise
      */
     public boolean addMembership(Membership membership) {
+        if (membership.getMembershipType() == null || membership.getMembershipType().isEmpty()) {
+            logger.severe("Membership type cannot be null or empty.");
+            return false;
+        }
         String sql = "INSERT INTO memberships (membership_type, membership_description, membership_cost, member_id) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -144,6 +148,11 @@ public class MembershipDAO {
      * @return true if successful, false otherwise
      */
     public boolean updateMembership(Membership membership) {
+        // Ensure membership type is not null
+        if (membership.getMembershipType() == null || membership.getMembershipType().isEmpty()) {
+            logger.severe("Membership type cannot be null or empty.");
+            return false;
+        }
         String sql = "UPDATE memberships SET membership_type = ?, membership_description = ?, membership_cost = ? WHERE membership_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();

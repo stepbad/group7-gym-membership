@@ -26,10 +26,19 @@ public class MembershipService {
             logger.warning("Error: Membership cost must be greater than 0.");
             return false;
         }
+        // Validate member ID
         if (membership.getMemberId() <= 0) {
             logger.warning("Error: Invalid member ID.");
             return false;
         }
+
+        // Validate membership type (new validation step)
+        if (membership.getMembershipType() == null || membership.getMembershipType().trim().isEmpty()) {
+            logger.warning("Error: Membership type cannot be null or empty.");
+            return false;
+        }
+
+
         boolean result = membershipDAO.addMembership(membership);
         if (result) {
             logger.info("Membership added successfully.");
@@ -60,6 +69,12 @@ public class MembershipService {
             logger.warning("Error: Membership cost must be greater than 0.");
             return false;
         }
+        // Validate membership type
+        if (membership.getMembershipType() == null || membership.getMembershipType().trim().isEmpty()) {
+            logger.warning("Error: Membership type cannot be null or empty.");
+            return false;
+        }
+
         if (membershipDAO.getMembershipById(membership.getMembershipId()) == null) {
             logger.warning("Error: Membership not found with ID " + membership.getMembershipId());
             return false;
