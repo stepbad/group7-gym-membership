@@ -64,9 +64,13 @@ public class UserService {
     public User loginUser(String email, String passwordPlaintext) {
         try {
             User user = userDAO.getUserByEmail(email);
-            if (user != null && PasswordUtils.checkPassword(passwordPlaintext, user.getPasswordHash())) {
-                logger.info("Login successful: " + email);
-                return user;
+            if (user != null) {
+                System.out.println("DEBUG - Stored hash: " + user.getPasswordHash());
+                System.out.println("DEBUG - Entered password: " + passwordPlaintext);
+                if (PasswordUtils.checkPassword(passwordPlaintext, user.getPasswordHash())) {
+                    logger.info("Login successful: " + email);
+                    return user;
+                }
             }
             System.out.println("Invalid credentials.");
         } catch (SQLException e) {

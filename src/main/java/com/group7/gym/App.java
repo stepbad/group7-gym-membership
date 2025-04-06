@@ -5,7 +5,6 @@ import com.group7.gym.models.*;
 import com.group7.gym.service.*;
 import com.group7.gym.utils.PasswordUtils;
 
-import java.sql.SQLException;
 import java.util.Scanner;
 
 /**
@@ -53,12 +52,13 @@ public class App {
                         System.out.println("Email is already registered.");
                         continue;
                     }
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     System.err.println("Error checking email: " + e.getMessage());
                     continue;
                 }
 
-                String hashedPassword = PasswordUtils.hashPassword(password);
+                String hashedPassword = password;
+
                 User newUser;
                 switch (role) {
                     case "admin":
@@ -75,6 +75,7 @@ public class App {
                         continue;
                 }
 
+
                 userService.registerUser(newUser);
 
             } else if (choice == 2) {
@@ -83,31 +84,24 @@ public class App {
                 System.out.print("Enter Password: ");
                 String password = scanner.nextLine().trim();
 
-                try {
-                    User user = userDAO.getUserByEmail(email);
-                    if (user != null && PasswordUtils.checkPassword(password, user.getPasswordHash())) {
-                        System.out.println("Login Successful! Welcome, " + user.getUsername());
-                        switch (user.getRole().toLowerCase()) {
-                            case "admin":
-                                AdminMenu adminMenu = new AdminMenu(scanner, new AdminService(), user);
-                                adminMenu.show();
-                                break;
-                            case "trainer":
-                                TrainerMenu trainerMenu = new TrainerMenu(scanner, new TrainerService(), new WorkoutClassService(), user);
-                                trainerMenu.show();
-                                break;
-                            case "member":
-                                MemberMenu memberMenu = new MemberMenu(scanner, new MemberService(), new WorkoutClassService(), user);
-                                memberMenu.show();
-                                break;
-                            default:
-                                System.out.println("Unknown role.");
-                        }
-                    } else {
-                        System.out.println("Invalid email or password. Try again.");
+                User user = userService.loginUser(email, password);
+                if (user != null) {
+                    System.out.println("Login Successful! Welcome, " + user.getUsername());
+                    switch (user.getRole().toLowerCase()) {
+                        case "admin":
+                            new AdminMenu(scanner, new AdminService(), user).show();
+                            break;
+                        case "trainer":
+                            new TrainerMenu(scanner, new TrainerService(), new WorkoutClassService(), user).show();
+                            break;
+                        case "member":
+                            new MemberMenu(scanner, new MemberService(), new WorkoutClassService(), user).show();
+                            break;
+                        default:
+                            System.out.println("Unknown role.");
                     }
-                } catch (SQLException e) {
-                    System.err.println("Database error: " + e.getMessage());
+                } else {
+                    System.out.println("Invalid email or password. Try again.");
                 }
 
             } else if (choice == 3) {
