@@ -1,7 +1,7 @@
 package com.group7.gym.service;
 
 import com.group7.gym.dao.UserDAO;
-import com.group7.gym.models.User;
+import com.group7.gym.models.*;
 import com.group7.gym.utils.PasswordUtils;
 
 import java.sql.SQLException;
@@ -30,12 +30,17 @@ public class UserService {
      */
     public void registerUser(User user) {
         try {
-            if (user.getEmail() == null || user.getPasswordHash() == null) {
-                throw new IllegalArgumentException("Email and password required.");
+            if (user.getEmail() == null || user.getPasswordHash() == null || user.getRole() == null) {
+                throw new IllegalArgumentException("Email, password, and role are required.");
+            }
+
+            if (!isValidRole(user.getRole())) {
+                System.out.println("Invalid role: must be admin, trainer, or member.");
+                return;
             }
 
             if (userDAO.getUserByEmail(user.getEmail()) != null) {
-                System.out.println("Email already registered.");
+                System.out.println("Email is already registered.");
                 return;
             }
 
@@ -107,5 +112,12 @@ public class UserService {
         } else {
             System.out.println("User not found or could not be deleted.");
         }
+    }
+
+    /**
+     * Helper method to check if a role is valid.
+     */
+    private boolean isValidRole(String role) {
+        return role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("trainer") || role.equalsIgnoreCase("member");
     }
 }
