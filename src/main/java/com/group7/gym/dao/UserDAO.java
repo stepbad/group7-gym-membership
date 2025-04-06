@@ -166,36 +166,20 @@ public class UserDAO {
      */
     private User buildUserFromResultSet(ResultSet rs) throws SQLException {
         String role = rs.getString("role");
+        int userId = rs.getInt("user_id");
+        String username = rs.getString("username");
+        String passwordHash = rs.getString("password_hash");
+        String email = rs.getString("email");
+        String phone = rs.getString("phone");
+        String address = rs.getString("address");
+
         switch (role.toLowerCase()) {
             case "admin":
-                return new Admin(
-                        rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("password_hash"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
-                        rs.getString("address")
-                );
+                return new Admin(userId, username, passwordHash, email, phone, address);
             case "trainer":
-                return new Trainer(
-                        rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("password_hash"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
-                        rs.getString("address")
-                );
+                return new Trainer(userId, username, passwordHash, email, phone, address);
             case "member":
-                return new Member(
-                        rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("password_hash"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
-                        rs.getString("address"),
-                        0,
-                        0.0
-                );
+                return new Member(userId, username, passwordHash, email, phone, address, 0, 0.0);
             default:
                 throw new IllegalArgumentException("Unknown role: " + role);
         }

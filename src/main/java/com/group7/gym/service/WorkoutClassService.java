@@ -1,8 +1,11 @@
 package com.group7.gym.service;
 
+import com.group7.gym.DatabaseConnection;
 import com.group7.gym.dao.WorkoutClassDAO;
 import com.group7.gym.models.WorkoutClass;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -70,6 +73,26 @@ public class WorkoutClassService {
             System.err.println("Error retrieving workout class: " + e.getMessage());
         }
     }
+
+    /**
+ * Unassigns a trainer from a workout class by setting trainer_id to NULL.
+ *
+ * @param classId ID of the workout class to update
+ * @return true if successful, false otherwise
+ */
+public boolean unassignTrainerFromClass(int classId) {
+    String sql = "UPDATE workout_classes SET trainer_id = NULL WHERE class_id = ?";
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, classId);
+        int affectedRows = stmt.executeUpdate();
+        return affectedRows > 0;
+    } catch (SQLException e) {
+        System.err.println("Error unassigning trainer: " + e.getMessage());
+        return false;
+    }
+}
+
 
     /**
      * Updates an existing workout class.

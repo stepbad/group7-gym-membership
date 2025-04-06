@@ -1,13 +1,8 @@
 package com.group7.gym;
 
 import com.group7.gym.dao.UserDAO;
-import com.group7.gym.models.User;
-import com.group7.gym.models.Admin;
-import com.group7.gym.service.AdminService;
-import com.group7.gym.service.TrainerService;
-import com.group7.gym.service.MemberService;
-import com.group7.gym.service.MembershipService;
-import com.group7.gym.service.WorkoutClassService;
+import com.group7.gym.models.*;
+import com.group7.gym.service.*;
 import com.group7.gym.utils.PasswordUtils;
 
 import java.sql.SQLException;
@@ -23,17 +18,52 @@ public class App {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         UserDAO userDAO = new UserDAO();
+        UserService userService = new UserService();
 
         System.out.println("Welcome to Gym Management System!");
 
         while (true) {
-            System.out.println("\n1. Login");
-            System.out.println("2. Exit");
+            System.out.println("\n1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
             System.out.print("Enter choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline
 
             if (choice == 1) {
+                System.out.print("Enter Username: ");
+                String username = scanner.nextLine();
+                System.out.print("Enter Email: ");
+                String email = scanner.nextLine();
+                System.out.print("Enter Password: ");
+                String password = scanner.nextLine();
+                System.out.print("Enter Phone: ");
+                String phone = scanner.nextLine();
+                System.out.print("Enter Address: ");
+                String address = scanner.nextLine();
+                System.out.print("Enter Role (admin/trainer/member): ");
+                String role = scanner.nextLine();
+
+                String hashedPassword = PasswordUtils.hashPassword(password);
+
+                User newUser;
+                switch (role.toLowerCase()) {
+                    case "admin":
+                        newUser = new Admin(0, username, hashedPassword, email, phone, address);
+                        break;
+                    case "trainer":
+                        newUser = new Trainer(0, username, hashedPassword, email, phone, address);
+                        break;
+                    case "member":
+                        newUser = new Member(0, username, hashedPassword, email, phone, address, 0, 0.0);
+                        break;
+                    default:
+                        System.out.println("Invalid role. Please enter admin, trainer, or member.");
+                        continue;
+                }
+                userService.registerUser(newUser);
+
+            } else if (choice == 2) {
                 System.out.print("Enter Email: ");
                 String email = scanner.nextLine();
                 System.out.print("Enter Password: ");
@@ -50,7 +80,7 @@ public class App {
                 } catch (SQLException e) {
                     System.err.println("Database error: " + e.getMessage());
                 }
-            } else if (choice == 2) {
+            } else if (choice == 3) {
                 System.out.println("Exiting system...");
                 break;
             } else {
@@ -129,11 +159,13 @@ public class App {
             System.out.println("\n--- Trainer Menu ---");
             System.out.println("1. View My Profile");
             System.out.println("2. View Assigned Classes");
-            System.out.println("3. Assign Existing Class");
-            System.out.println("4. Create New Class");
-            System.out.println("5. Update My Class");
-            System.out.println("6. Delete My Class");
-            System.out.println("7. Logout");
+            System.out.println("3. View All Classes");
+            System.out.println("4. Assign Existing Class");
+            System.out.println("5. Unassign Class");
+            System.out.println("6. Create New Class");
+            System.out.println("7. Update My Class");
+            System.out.println("8. Delete My Class");
+            System.out.println("9. Logout");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -147,12 +179,21 @@ public class App {
                     trainerService.viewAssignedClasses(trainer.getUserId());
                     break;
                 case 3:
+                    workoutClassService.listAllWorkoutClasses();
+                    break;
+                case 4:
                     System.out.print("Enter class ID to assign: ");
                     int assignId = scanner.nextInt();
                     scanner.nextLine();
                     trainerService.assignToClass(assignId, trainer.getUserId());
                     break;
-                case 4:
+                case 5:
+                    System.out.print("Enter class ID to unassign: ");
+                    int unassignId = scanner.nextInt();
+                    scanner.nextLine();
+                    workoutClassService.unassignTrainerFromClass(unassignId);
+                    break;
+                case 6:
                     System.out.print("Enter class type: ");
                     String type = scanner.nextLine();
                     System.out.print("Enter class description: ");
@@ -160,7 +201,7 @@ public class App {
                     workoutClassService.createWorkoutClass(
                         new com.group7.gym.models.WorkoutClass(type, desc, trainer.getUserId()));
                     break;
-                case 5:
+                case 7:
                     System.out.print("Enter class ID to update: ");
                     int updateId = scanner.nextInt();
                     scanner.nextLine();
@@ -171,13 +212,13 @@ public class App {
                     workoutClassService.updateWorkoutClass(
                         new com.group7.gym.models.WorkoutClass(updateId, newType, newDesc, trainer.getUserId()));
                     break;
-                case 6:
+                case 8:
                     System.out.print("Enter class ID to delete: ");
                     int deleteId = scanner.nextInt();
                     scanner.nextLine();
                     workoutClassService.deleteWorkoutClass(deleteId);
                     break;
-                case 7:
+                case 9:
                     System.out.println("Logging out...");
                     return;
                 default:

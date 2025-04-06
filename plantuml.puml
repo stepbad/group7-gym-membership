@@ -1,0 +1,43 @@
+@startuml
+
+title Gym Management System - Class Diagram
+
+class User {
+    - int userId
+    - String username
+    - String passwordHash
+    - String email
+    - String phone
+    - String address
+    - String role
+}
+
+class Admin extends User
+class Trainer extends User
+class Member extends User
+
+class Membership {
+    - int membershipId
+    - int memberId
+    - String membershipType
+    - double membershipCost
+    - Date startDate
+    - Date endDate
+}
+
+class WorkoutClass {
+    - int classId
+    - String className
+    - Timestamp schedule
+    - int capacity
+    - int trainerId
+}
+
+User <|-- Admin
+User <|-- Trainer
+User <|-- Member
+Member "1" -- "0..*" Membership
+Trainer "1" -- "0..*" WorkoutClass
+
+@enduml
+
