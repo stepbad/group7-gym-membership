@@ -74,6 +74,7 @@ public class App {
                         System.out.println("Unexpected error: invalid role.");
                         continue;
                 }
+
                 userService.registerUser(newUser);
 
             } else if (choice == 2) {
@@ -108,6 +109,7 @@ public class App {
                 } catch (SQLException e) {
                     System.err.println("Database error: " + e.getMessage());
                 }
+
             } else if (choice == 3) {
                 System.out.println("Exiting system...");
                 break;

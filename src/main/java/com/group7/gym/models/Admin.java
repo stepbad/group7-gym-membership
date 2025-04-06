@@ -23,7 +23,7 @@ public class Admin extends User {
      * @param address       Physical address
      */
     public Admin(int userId, String username, String passwordHash, String email, String phone, String address) {
-        super(userId, username, passwordHash, email, phone, address, "Admin");
+        super(userId, username, passwordHash, email, phone, address, "admin");
     }
 
     /**

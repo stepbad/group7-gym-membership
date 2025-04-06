@@ -32,7 +32,7 @@ public class Member extends User {
      */
     public Member(int userId, String username, String passwordHash, String email, String phone, String address,
                   int membershipId, double totalMembershipExpenses) {
-        super(userId, username, passwordHash, email, phone, address, "member"); // Role is set to 'member'
+        super(userId, username, passwordHash, email, phone, address, "member");
         this.membershipId = membershipId;
         this.totalMembershipExpenses = totalMembershipExpenses;
     }

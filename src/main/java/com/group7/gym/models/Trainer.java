@@ -23,7 +23,7 @@ public class Trainer extends User {
      * @param address       Physical address
      */
     public Trainer(int userId, String username, String passwordHash, String email, String phone, String address) {
-        super(userId, username, passwordHash, email, phone, address, "Trainer");
+        super(userId, username, passwordHash, email, phone, address, "trainer");
         this.assignedClassIds = new ArrayList<>();
     }
 
