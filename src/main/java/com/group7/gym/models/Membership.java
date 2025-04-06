@@ -1,21 +1,36 @@
 package com.group7.gym.models;
-
+import java.time.LocalDate;
 /**
  * Represents a gym membership with cost, type, and association to a member.
  */
 public class Membership {
 
     private int membershipId;
+    private int memberId;
     private String membershipType;
     private String membershipDescription;
     private double membershipCost;
-    private int memberId;
+
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     /**
      * Default constructor.
      */
     public Membership() {
         // Default constructor
+    }
+
+    // Constructor to initialize all fields
+    public Membership(int membershipId, int memberId, String membershipType, String membershipDescription,
+                      double membershipCost, LocalDate startDate, LocalDate endDate) {
+        this.membershipId = membershipId;
+        this.memberId = memberId;
+        this.membershipType = membershipType;
+        this.membershipDescription = membershipDescription;
+        this.membershipCost = membershipCost;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     /**
@@ -34,6 +49,7 @@ public class Membership {
         this.membershipCost = membershipCost;
         this.memberId = memberId;
     }
+
 
     public int getMembershipId() {
         return membershipId;
@@ -75,6 +91,23 @@ public class Membership {
         this.memberId = memberId;
     }
 
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+
     /**
      * Returns a formatted string describing the membership.
      *
@@ -87,6 +120,8 @@ public class Membership {
                 ", membershipType='" + membershipType + '\'' +
                 ", membershipDescription='" + membershipDescription + '\'' +
                 ", membershipCost=" + membershipCost +
+                ", startDate=" + startDate +  // Include startDate in toString
+                ", endDate=" + endDate +      // Include endDate in toString
                 ", memberId=" + memberId +
                 '}';
     }

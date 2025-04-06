@@ -73,6 +73,41 @@ public class MembershipDAO {
     }
 
     /**
+     * Retrieves all memberships associated with a specific member ID.
+     *
+     * @param memberId ID of the member
+     * @return List of Membership objects associated with the member
+     */
+    public List<Membership> getMembershipsByMemberId(int memberId) {
+        List<Membership> memberships = new ArrayList<>();
+        String sql = "SELECT * FROM memberships WHERE member_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, memberId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Membership membership = new Membership(
+                        rs.getInt("membership_id"),
+                        rs.getString("membership_type"),
+                        rs.getString("membership_description"),
+                        rs.getDouble("membership_cost"),
+                        rs.getInt("member_id")
+                );
+                memberships.add(membership);
+            }
+
+        } catch (SQLException e) {
+            logger.severe("Error retrieving memberships by member ID: " + e.getMessage());
+        }
+
+        return memberships;
+    }
+
+
+    /**
      * Retrieves all memberships from the database.
      *
      * @return List of Membership objects

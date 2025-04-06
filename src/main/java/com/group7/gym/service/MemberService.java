@@ -3,7 +3,7 @@ package com.group7.gym.service;
 import com.group7.gym.dao.MemberDAO;
 import com.group7.gym.models.Member;
 
-import java.sql.Connection;
+//import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -14,9 +14,7 @@ public class MemberService {
     private MemberDAO memberDAO;
 
     /**
-     * Constructs a MemberService with the given database connection.
-     *
-     * @param conn Active database connection
+     * Constructs a MemberService.
      */
     public MemberService() {
         this.memberDAO = new MemberDAO();
