@@ -25,7 +25,7 @@ public class TrainerDAO {
      * @throws SQLException if a database error occurs
      */
     public void addTrainer(Trainer trainer) throws SQLException {
-        String sql = "INSERT INTO users (username, password, email, phone, address, role) VALUES (?, ?, ?, ?, ?, 'Trainer')";
+        String sql = "INSERT INTO users (username, password_hash, email, phone, address, role) VALUES (?, ?, ?, ?, ?, 'trainer')";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -47,7 +47,7 @@ public class TrainerDAO {
      */
     public List<Trainer> getAllTrainers() throws SQLException {
         List<Trainer> trainers = new ArrayList<>();
-        String sql = "SELECT * FROM users WHERE role = 'Trainer'";
+        String sql = "SELECT * FROM users WHERE role = 'trainer'";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -57,7 +57,7 @@ public class TrainerDAO {
                 Trainer trainer = new Trainer(
                         rs.getInt("user_id"),
                         rs.getString("username"),
-                        rs.getString("password"),
+                        rs.getString("password_hash"),
                         rs.getString("email"),
                         rs.getString("phone"),
                         rs.getString("address")
@@ -76,7 +76,7 @@ public class TrainerDAO {
      * @throws SQLException if a database error occurs
      */
     public Trainer getTrainerById(int trainerId) throws SQLException {
-        String sql = "SELECT * FROM users WHERE user_id = ? AND role = 'Trainer'";
+        String sql = "SELECT * FROM users WHERE user_id = ? AND role = 'trainer'";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -88,7 +88,7 @@ public class TrainerDAO {
                 return new Trainer(
                         rs.getInt("user_id"),
                         rs.getString("username"),
-                        rs.getString("password"),
+                        rs.getString("password_hash"),
                         rs.getString("email"),
                         rs.getString("phone"),
                         rs.getString("address")
@@ -105,7 +105,7 @@ public class TrainerDAO {
      * @throws SQLException if a database error occurs
      */
     public void updateTrainer(Trainer trainer) throws SQLException {
-        String sql = "UPDATE users SET username = ?, password = ?, email = ?, phone = ?, address = ? WHERE user_id = ?";
+        String sql = "UPDATE users SET username = ?, password_hash = ?, email = ?, phone = ?, address = ? WHERE user_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -127,7 +127,7 @@ public class TrainerDAO {
      * @throws SQLException if a database error occurs
      */
     public void deleteTrainer(int trainerId) throws SQLException {
-        String sql = "DELETE FROM users WHERE user_id = ? AND role = 'Trainer'";
+        String sql = "DELETE FROM users WHERE user_id = ? AND role = 'trainer'";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
