@@ -19,21 +19,31 @@ public class UserDAO {
      * Adds a new user to the database.
      *
      * @param user User to add
-     * @return true if successful
+     * @return newly generated user ID if successful, -1 otherwise
      * @throws SQLException if a database error occurs
      */
-    public boolean addUser(User user) throws SQLException {
+    public int addUser(User user) throws SQLException {
         String sql = "INSERT INTO users (username, password_hash, email, phone, address, role) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPasswordHash());
             stmt.setString(3, user.getEmail());
             stmt.setString(4, user.getPhone());
             stmt.setString(5, user.getAddress());
             stmt.setString(6, user.getRole());
-            return stmt.executeUpdate() > 0;
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                ResultSet generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                }
+            }
         }
+        return -1;
     }
 
     /**
