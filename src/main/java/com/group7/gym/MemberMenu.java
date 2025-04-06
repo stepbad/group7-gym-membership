@@ -17,6 +17,7 @@ public class MemberMenu {
     private final MembershipService membershipService;
     private final User member;
 
+    // Constructor that takes the necessary services and user
     public MemberMenu(Scanner scanner, MemberService memberService, WorkoutClassService workoutClassService, MembershipService membershipService, User member) {
         this.scanner = scanner;
         this.memberService = memberService;
@@ -25,6 +26,7 @@ public class MemberMenu {
         this.member = member;
     }
 
+    // Method to display the member menu and handle the actions
     public void show() {
         while (true) {
             System.out.println("\n--- Member Menu ---");
@@ -34,9 +36,9 @@ public class MemberMenu {
             System.out.println("4. Logout");
             System.out.print("Choose an option: ");
 
-            int choice = scanner.nextInt();
+            int choice;
             try {
-                choice = Integer.parseInt(scanner.nextLine());
+                choice = Integer.parseInt(scanner.nextLine());  // Ensures that user input is correctly parsed as an integer
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number.");
                 continue;
@@ -54,16 +56,16 @@ public class MemberMenu {
                     break;
                 case 4:
                     System.out.println("Logging out...");
-                    return;
+                    return;  // Exit the loop and log out
                 default:
                     System.out.println("Invalid choice. Try again.");
             }
         }
     }
 
-
+    // Method to view membership expenses
     private void viewMembershipExpenses() {
-        List<Membership> memberships = membershipService.getMembershipsByMemberId(member.getId());
+        List<Membership> memberships = membershipService.getMembershipsByMemberId(member.getUserId());
         if (memberships.isEmpty()) {
             System.out.println("No memberships found for your account.");
         } else {
@@ -77,12 +79,12 @@ public class MemberMenu {
         }
     }
 
-
+    // Method to purchase a new gym membership
     private void purchaseNewMembership() {
         System.out.print("Enter membership cost: ");
         double cost;
         try {
-            cost = Double.parseDouble(scanner.nextLine());
+            cost = Double.parseDouble(scanner.nextLine());  // Parses cost entered by the user
         } catch (NumberFormatException e) {
             System.out.println("Invalid input. Cost must be a number.");
             return;
@@ -93,12 +95,14 @@ public class MemberMenu {
             return;
         }
 
+        // Creating and setting up the new membership
         Membership membership = new Membership();
-        membership.setMemberId(member.getId());
-        membership.setMembershipCost(cost);
-        membership.setStartDate(LocalDate.now());
-        membership.setEndDate(LocalDate.now().plusMonths(1)); // Example: membership valid for 1 month
+        membership.setMemberId(member.getUserId());  // Set the member ID from the logged-in user
+        membership.setMembershipCost(cost);  // Set the membership cost entered by the user
+        membership.setStartDate(LocalDate.now());  // Set the start date to the current date
+        membership.setEndDate(LocalDate.now().plusMonths(1));  // Set the end date to 1 month from now
 
+        // Adding the membership to the system
         boolean success = membershipService.addMembership(membership);
         if (success) {
             System.out.println("New membership purchased successfully!");
@@ -106,5 +110,4 @@ public class MemberMenu {
             System.out.println("Failed to purchase membership.");
         }
     }
-
 }
