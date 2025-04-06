@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 /**
  * Main entry point for the Gym Management System.
- * Handles user login and routes users to role-based interfaces.
+ * Handles user registration, login, and routes users to role-based interfaces.
  */
 public class App {
 
@@ -32,20 +32,34 @@ public class App {
 
             if (choice == 1) {
                 System.out.print("Enter Username: ");
-                String username = scanner.nextLine();
+                String username = scanner.nextLine().trim();
                 System.out.print("Enter Email: ");
-                String email = scanner.nextLine();
+                String email = scanner.nextLine().trim().toLowerCase();
                 System.out.print("Enter Password: ");
-                String password = scanner.nextLine();
+                String password = scanner.nextLine().trim();
                 System.out.print("Enter Phone: ");
-                String phone = scanner.nextLine();
+                String phone = scanner.nextLine().trim();
                 System.out.print("Enter Address: ");
-                String address = scanner.nextLine();
+                String address = scanner.nextLine().trim();
                 System.out.print("Enter Role (admin/trainer/member): ");
-                String role = scanner.nextLine();
+                String role = scanner.nextLine().trim().toLowerCase();
+
+                if (!role.equals("admin") && !role.equals("trainer") && !role.equals("member")) {
+                    System.out.println("Invalid role. Must be admin, trainer, or member.");
+                    continue;
+                }
+
+                try {
+                    if (userDAO.getUserByEmail(email) != null) {
+                        System.out.println("Email is already registered.");
+                        continue;
+                    }
+                } catch (SQLException e) {
+                    System.err.println("Error checking email: " + e.getMessage());
+                    continue;
+                }
 
                 String hashedPassword = PasswordUtils.hashPassword(password);
-
                 User newUser;
                 switch (role.toLowerCase()) {
                     case "admin":
@@ -58,16 +72,16 @@ public class App {
                         newUser = new Member(0, username, hashedPassword, email, phone, address, 0, 0.0);
                         break;
                     default:
-                        System.out.println("Invalid role. Please enter admin, trainer, or member.");
+                        System.out.println("Unexpected error: invalid role.");
                         continue;
                 }
                 userService.registerUser(newUser);
 
             } else if (choice == 2) {
                 System.out.print("Enter Email: ");
-                String email = scanner.nextLine();
+                String email = scanner.nextLine().trim().toLowerCase();
                 System.out.print("Enter Password: ");
-                String password = scanner.nextLine();
+                String password = scanner.nextLine().trim();
 
                 try {
                     User user = userDAO.getUserByEmail(email);
