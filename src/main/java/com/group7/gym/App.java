@@ -17,6 +17,9 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         UserDAO userDAO = new UserDAO();
         UserService userService = new UserService();
+        MembershipService membershipService = new MembershipService(); // New MembershipService
+        MemberService memberService = new MemberService();
+        WorkoutClassService workoutClassService = new WorkoutClassService();
 
         System.out.println("Welcome to Gym Management System!");
 
@@ -95,7 +98,7 @@ public class App {
                             new TrainerMenu(scanner, new TrainerService(), new WorkoutClassService(), user).show();
                             break;
                         case "member":
-                            new MemberMenu(scanner, new MemberService(), new WorkoutClassService(), user).show();
+                            new MemberMenu(scanner, new MemberService(), new WorkoutClassService(), new MembershipService(), user).show();
                             break;
                         default:
                             System.out.println("Unknown role.");
