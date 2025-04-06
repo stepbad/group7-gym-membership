@@ -23,7 +23,7 @@ public class TrainerMenu {
 
     public void show() {
         while (true) {
-            System.out.println("\n--- Trainer Menu ---");
+            System.out.println("\n========== Trainer Menu ==========");
             System.out.println("1. View My Profile");
             System.out.println("2. View Assigned Classes");
             System.out.println("3. View All Classes");
@@ -41,11 +41,17 @@ public class TrainerMenu {
 
             switch (choice) {
                 case 1:
+                    System.out.println("----- Trainer Profile -----");
                     Trainer t = trainerService.getTrainerById(trainer.getUserId());
                     if (t != null) {
-                        System.out.println(t);
+                        System.out.println("\nYour Profile:");
+                        System.out.println("ID       : " + t.getUserId());
+                        System.out.println("Username : " + t.getUsername());
+                        System.out.println("Email    : " + t.getEmail());
+                        System.out.println("Phone    : " + t.getPhone());
+                        System.out.println("Address  : " + t.getAddress());
                     } else {
-                        System.out.println("Trainer not found.");
+                        System.out.println("Trainer profile not found.");
                     }
                     break;
                 case 2:
