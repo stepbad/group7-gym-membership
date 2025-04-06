@@ -4,6 +4,8 @@ import com.group7.gym.DatabaseConnection;
 import com.group7.gym.models.WorkoutClass;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -22,7 +24,8 @@ public class WorkoutClassDAO {
      * @throws SQLException if a database error occurs
      */
     public void addWorkoutClass(WorkoutClass wc) throws SQLException {
-        String sql = "INSERT INTO workout_classes (type, description, trainer_id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO workout_classes (type, description, trainer_id, start_time, end_time, class_date) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -30,6 +33,10 @@ public class WorkoutClassDAO {
             stmt.setString(1, wc.getType());
             stmt.setString(2, wc.getDescription());
             stmt.setInt(3, wc.getTrainerId());
+            stmt.setTime(4, Time.valueOf(wc.getStartTime()));
+            stmt.setTime(5, Time.valueOf(wc.getEndTime()));
+            stmt.setDate(6, Date.valueOf(wc.getClassDate()));
+
             stmt.executeUpdate();
         }
     }
@@ -49,12 +56,16 @@ public class WorkoutClassDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                list.add(new WorkoutClass(
-                        rs.getInt("workout_class_id"),
-                        rs.getString("type"),
-                        rs.getString("description"),
-                        rs.getInt("trainer_id")
-                ));
+                WorkoutClass wc = new WorkoutClass(
+                    rs.getInt("workout_class_id"),
+                    rs.getString("type"),
+                    rs.getString("description"),
+                    rs.getInt("trainer_id"),
+                    rs.getTime("start_time").toLocalTime(),
+                    rs.getTime("end_time").toLocalTime(),
+                    rs.getDate("class_date").toLocalDate()
+                );
+                list.add(wc);
             }
         }
 
@@ -79,10 +90,13 @@ public class WorkoutClassDAO {
 
             if (rs.next()) {
                 return new WorkoutClass(
-                        rs.getInt("workout_class_id"),
-                        rs.getString("type"),
-                        rs.getString("description"),
-                        rs.getInt("trainer_id")
+                    rs.getInt("workout_class_id"),
+                    rs.getString("type"),
+                    rs.getString("description"),
+                    rs.getInt("trainer_id"),
+                    rs.getTime("start_time").toLocalTime(),
+                    rs.getTime("end_time").toLocalTime(),
+                    rs.getDate("class_date").toLocalDate()
                 );
             }
         }
@@ -97,7 +111,8 @@ public class WorkoutClassDAO {
      * @throws SQLException if a database error occurs
      */
     public void updateWorkoutClass(WorkoutClass wc) throws SQLException {
-        String sql = "UPDATE workout_classes SET type = ?, description = ?, trainer_id = ? WHERE workout_class_id = ?";
+        String sql = "UPDATE workout_classes SET type = ?, description = ?, trainer_id = ?, " +
+                     "start_time = ?, end_time = ?, class_date = ? WHERE workout_class_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -105,7 +120,11 @@ public class WorkoutClassDAO {
             stmt.setString(1, wc.getType());
             stmt.setString(2, wc.getDescription());
             stmt.setInt(3, wc.getTrainerId());
-            stmt.setInt(4, wc.getWorkoutClassId());
+            stmt.setTime(4, Time.valueOf(wc.getStartTime()));
+            stmt.setTime(5, Time.valueOf(wc.getEndTime()));
+            stmt.setDate(6, Date.valueOf(wc.getClassDate()));
+            stmt.setInt(7, wc.getWorkoutClassId());
+
             stmt.executeUpdate();
         }
     }

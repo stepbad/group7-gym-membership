@@ -32,8 +32,12 @@ CREATE TABLE workout_classes (
     workout_class_id SERIAL PRIMARY KEY,
     type VARCHAR(50) NOT NULL,
     description TEXT,
-    trainer_id INT REFERENCES users(user_id) ON DELETE SET NULL
+    trainer_id INT REFERENCES users(user_id) ON DELETE SET NULL,
+    start_time TIME,
+    end_time TIME,
+    class_date DATE
 );
+
 
 -- MEMBER_CLASS TABLE
 CREATE TABLE member_class (

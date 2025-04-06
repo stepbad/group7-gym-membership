@@ -6,6 +6,8 @@ import com.group7.gym.models.WorkoutClass;
 import com.group7.gym.service.TrainerService;
 import com.group7.gym.service.WorkoutClassService;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Scanner;
 
 public class TrainerMenu {
@@ -77,8 +79,26 @@ public class TrainerMenu {
                     String type = scanner.nextLine();
                     System.out.print("Enter class description: ");
                     String desc = scanner.nextLine();
-                    workoutClassService.createWorkoutClass(
-                        new WorkoutClass(type, desc, trainer.getUserId()));
+                    System.out.print("Enter class date (YYYY-MM-DD): ");
+                    String dateInput = scanner.nextLine();
+                    System.out.print("Enter start time (HH:MM, 24hr): ");
+                    String startInput = scanner.nextLine();
+                    System.out.print("Enter end time (HH:MM, 24hr): ");
+                    String endInput = scanner.nextLine();
+
+                    try {
+                        WorkoutClass newClass = new WorkoutClass(
+                            type,
+                            desc,
+                            trainer.getUserId(),
+                            LocalTime.parse(startInput),
+                            LocalTime.parse(endInput),
+                            LocalDate.parse(dateInput)
+                        );
+                        workoutClassService.createWorkoutClass(newClass);
+                    } catch (Exception e) {
+                        System.err.println("Error: Invalid input format. " + e.getMessage());
+                    }
                     break;
                 case 7:
                     System.out.print("Enter class ID to update: ");
@@ -88,8 +108,27 @@ public class TrainerMenu {
                     String newType = scanner.nextLine();
                     System.out.print("Enter new description: ");
                     String newDesc = scanner.nextLine();
-                    workoutClassService.updateWorkoutClass(
-                        new WorkoutClass(updateId, newType, newDesc, trainer.getUserId()));
+                    System.out.print("Enter new class date (YYYY-MM-DD): ");
+                    String newDate = scanner.nextLine();
+                    System.out.print("Enter new start time (HH:MM, 24hr): ");
+                    String newStart = scanner.nextLine();
+                    System.out.print("Enter new end time (HH:MM, 24hr): ");
+                    String newEnd = scanner.nextLine();
+                    
+                    try {
+                        WorkoutClass updated = new WorkoutClass(
+                            updateId,
+                            newType,
+                            newDesc,
+                            trainer.getUserId(),
+                            LocalTime.parse(newStart),
+                            LocalTime.parse(newEnd),
+                            LocalDate.parse(newDate)
+                        );
+                        workoutClassService.updateWorkoutClass(updated);
+                    } catch (Exception e) {
+                        System.err.println("Error: Invalid input format. " + e.getMessage());
+                    }                
                     break;
                 case 8:
                     System.out.print("Enter class ID to delete: ");
