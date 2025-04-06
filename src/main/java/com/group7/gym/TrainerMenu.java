@@ -1,5 +1,6 @@
 package com.group7.gym;
 
+import com.group7.gym.models.Trainer;
 import com.group7.gym.models.User;
 import com.group7.gym.models.WorkoutClass;
 import com.group7.gym.service.TrainerService;
@@ -40,7 +41,12 @@ public class TrainerMenu {
 
             switch (choice) {
                 case 1:
-                    trainerService.viewTrainer(trainer.getUserId());
+                    Trainer t = trainerService.getTrainerById(trainer.getUserId());
+                    if (t != null) {
+                        System.out.println(t);
+                    } else {
+                        System.out.println("Trainer not found.");
+                    }
                     break;
                 case 2:
                     trainerService.viewAssignedClasses(trainer.getUserId());

@@ -1,9 +1,13 @@
 package com.group7.gym.service;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Logger;
 
+import com.group7.gym.DatabaseConnection;
 import com.group7.gym.dao.*;
 import com.group7.gym.models.*;
 
@@ -58,18 +62,31 @@ public class TrainerService {
      *
      * @param trainerId Trainer ID
      */
-    public void viewTrainer(int trainerId) {
-        try {
-            Trainer t = trainerDAO.getTrainerById(trainerId);
-            if (t != null) {
-                System.out.println(t);
-            } else {
-                System.out.println("Trainer not found.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error retrieving trainer: " + e.getMessage());
+    public Trainer getTrainerById(int id) {
+    String sql = "SELECT * FROM users WHERE user_id = ? AND role = 'trainer'";
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            return new Trainer(
+                rs.getInt("user_id"),
+                rs.getString("username"),
+                rs.getString("password_hash"),
+                rs.getString("email"),
+                rs.getString("phone"),
+                rs.getString("address")
+            );
         }
+
+    } catch (SQLException e) {
+        Logger.getLogger(TrainerService.class.getName()).severe("Error fetching trainer: " + e.getMessage());
     }
+    return null;
+}
+
 
     /**
      * Updates a trainer’s information.

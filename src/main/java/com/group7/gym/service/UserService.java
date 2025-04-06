@@ -47,8 +47,10 @@ public class UserService {
             // Hash the raw password before saving
             user.setPasswordHash(PasswordUtils.hashPassword(user.getPasswordHash()));
 
-            userDAO.addUser(user);
-            System.out.println("User registered successfully.");
+            int newUserId = userDAO.addUser(user);
+            System.out.println("\nUser registered successfully!");
+            System.out.println("Your User ID is: " + newUserId + " (keep this for future reference)");
+
         } catch (SQLException | IllegalArgumentException e) {
             logger.severe("Registration failed: " + e.getMessage());
         }
