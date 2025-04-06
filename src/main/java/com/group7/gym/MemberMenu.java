@@ -23,9 +23,7 @@ public class MemberMenu {
         while (true) {
             System.out.println("\n--- Member Menu ---");
             System.out.println("1. Browse Workout Classes");
-            System.out.println("2. View My Membership Expenses");
-            System.out.println("3. Purchase Membership");
-            System.out.println("4. Logout");
+            System.out.println("2. Logout");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -36,19 +34,6 @@ public class MemberMenu {
                     workoutClassService.listAllWorkoutClasses();
                     break;
                 case 2:
-                    memberService.viewMembershipExpenses(member.getUserId());
-                    break;
-                case 3:
-                    System.out.print("Enter membership type: ");
-                    String type = scanner.nextLine();
-                    System.out.print("Enter membership description: ");
-                    String desc = scanner.nextLine();
-                    System.out.print("Enter cost: ");
-                    double cost = scanner.nextDouble();
-                    scanner.nextLine();
-                    memberService.purchaseMembership(member.getUserId(), type, desc, cost);
-                    break;
-                case 4:
                     System.out.println("Logging out...");
                     return;
                 default:

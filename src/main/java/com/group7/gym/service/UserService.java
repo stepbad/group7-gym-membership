@@ -44,6 +44,9 @@ public class UserService {
                 return;
             }
 
+            // Hash the raw password before saving
+            user.setPasswordHash(PasswordUtils.hashPassword(user.getPasswordHash()));
+
             userDAO.addUser(user);
             System.out.println("User registered successfully.");
         } catch (SQLException | IllegalArgumentException e) {

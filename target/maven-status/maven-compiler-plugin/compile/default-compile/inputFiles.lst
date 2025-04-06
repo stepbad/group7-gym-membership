@@ -1,6 +1,10 @@
+/Users/stephenbadcock/winter2025/semester3/gym-membership/src/main/java/com/group7/gym/AdminMenu.java
 /Users/stephenbadcock/winter2025/semester3/gym-membership/src/main/java/com/group7/gym/App.java
 /Users/stephenbadcock/winter2025/semester3/gym-membership/src/main/java/com/group7/gym/DatabaseConnection.java
+/Users/stephenbadcock/winter2025/semester3/gym-membership/src/main/java/com/group7/gym/MemberMenu.java
+/Users/stephenbadcock/winter2025/semester3/gym-membership/src/main/java/com/group7/gym/TrainerMenu.java
 /Users/stephenbadcock/winter2025/semester3/gym-membership/src/main/java/com/group7/gym/dao/AdminDAO.java
+/Users/stephenbadcock/winter2025/semester3/gym-membership/src/main/java/com/group7/gym/dao/MemberClassDAO.java
 /Users/stephenbadcock/winter2025/semester3/gym-membership/src/main/java/com/group7/gym/dao/MemberDAO.java
 /Users/stephenbadcock/winter2025/semester3/gym-membership/src/main/java/com/group7/gym/dao/MembershipDAO.java
 /Users/stephenbadcock/winter2025/semester3/gym-membership/src/main/java/com/group7/gym/dao/TrainerDAO.java
