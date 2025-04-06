@@ -4,9 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.group7.gym.dao.TrainerDAO;
-import com.group7.gym.models.Trainer;
-import com.group7.gym.models.WorkoutClass;
+import com.group7.gym.dao.*;
+import com.group7.gym.models.*;
 
 /**
  * Service class for trainer-related business logic.
@@ -121,6 +120,25 @@ public class TrainerService {
     }
 
     /**
+     * Displays the roster of members enrolled in a specific workout class.
+     *
+     * @param classId The ID of the workout class
+     */
+    public void viewRoster(int classId) {
+        WorkoutClassService workoutClassService = new WorkoutClassService();
+        List<Member> roster = workoutClassService.getClassRoster(classId);
+        if (roster.isEmpty()) {
+            System.out.println("No members enrolled in this class.");
+        } else {
+            System.out.println("Members in class " + classId + ":");
+            for (Member member : roster) {
+                System.out.println(member);
+            }
+        }
+    }
+
+
+    /**
      * Assigns a trainer to a workout class.
      *
      * @param classId   Workout class ID
@@ -134,4 +152,6 @@ public class TrainerService {
             System.err.println("Error assigning trainer: " + e.getMessage());
         }
     }
+
+
 }

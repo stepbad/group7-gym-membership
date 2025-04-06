@@ -179,7 +179,8 @@ public class App {
             System.out.println("6. Create New Class");
             System.out.println("7. Update My Class");
             System.out.println("8. Delete My Class");
-            System.out.println("9. Logout");
+            System.out.println("9. View Roster for a Class");
+            System.out.println("10. Logout");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -233,6 +234,13 @@ public class App {
                     workoutClassService.deleteWorkoutClass(deleteId);
                     break;
                 case 9:
+                    System.out.print("Enter class ID to view roster: ");
+                    int classId = scanner.nextInt();
+                    scanner.nextLine();
+                    trainerService.viewRoster(classId);
+                    break;
+                
+                case 10:
                     System.out.println("Logging out...");
                     return;
                 default:
