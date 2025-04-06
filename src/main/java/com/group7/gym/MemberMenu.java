@@ -81,6 +81,11 @@ public class MemberMenu {
 
     // Method to purchase a new gym membership
     private void purchaseNewMembership() {
+        System.out.print("Options: Gold: 30$, Silver:50$, Platinum:80$");
+        // Ask for membership type
+        System.out.print("\nEnter membership type (G, S, P): ");
+        String membershipType = scanner.nextLine().toUpperCase();
+
         System.out.print("Enter membership cost: ");
         double cost;
         try {
@@ -95,9 +100,7 @@ public class MemberMenu {
             return;
         }
 
-        // Ask for membership type
-        System.out.print("Enter membership type (Gold, Silver, Platinum): ");
-        String membershipType = scanner.nextLine();
+
 
         // Creating and setting up the new membership
         Membership membership = new Membership();
