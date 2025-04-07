@@ -1,6 +1,7 @@
 package com.group7.gym.dao;
 
 import com.group7.gym.DatabaseConnection;
+
 import com.group7.gym.models.Member;
 import com.group7.gym.models.WorkoutClass;
 

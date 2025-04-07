@@ -17,6 +17,12 @@ public class WorkoutClass {
     private LocalTime endTime;
     private LocalDate classDate;
 
+    public WorkoutClass(int workoutClassId, String type, String description, int trainerId) {
+        this.workoutClassId = workoutClassId;
+        this.type = type;
+        this.description = description;
+        this.trainerId = trainerId;
+    }
     /**
      * Full constructor for WorkoutClass including ID and scheduling.
      *
