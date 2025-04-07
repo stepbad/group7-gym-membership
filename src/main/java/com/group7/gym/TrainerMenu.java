@@ -104,12 +104,12 @@ public class TrainerMenu {
 
                     try {
                         WorkoutClass newClass = new WorkoutClass(
-                            type,
-                            desc,
-                            trainer.getUserId(),
-                            LocalTime.parse(startInput),
-                            LocalTime.parse(endInput),
-                            LocalDate.parse(dateInput)
+                                type,
+                                desc,
+                                trainer.getUserId(),
+                                LocalTime.parse(startInput),
+                                LocalTime.parse(endInput),
+                                LocalDate.parse(dateInput)
                         );
                         workoutClassService.createWorkoutClass(newClass);
                     } catch (Exception e) {
@@ -138,13 +138,13 @@ public class TrainerMenu {
 
                     try {
                         WorkoutClass updated = new WorkoutClass(
-                            updateId,
-                            newType,
-                            newDesc,
-                            trainer.getUserId(),
-                            LocalTime.parse(newStart),
-                            LocalTime.parse(newEnd),
-                            LocalDate.parse(newDate)
+                                updateId,
+                                newType,
+                                newDesc,
+                                trainer.getUserId(),
+                                LocalTime.parse(newStart),
+                                LocalTime.parse(newEnd),
+                                LocalDate.parse(newDate)
                         );
                         workoutClassService.updateWorkoutClass(updated);
                     } catch (Exception e) {
