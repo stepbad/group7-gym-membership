@@ -71,8 +71,9 @@ public class UserService {
         try {
             User user = userDAO.getUserByEmail(email);
             if (user != null) {
-                System.out.println("DEBUG - Stored hash: " + user.getPasswordHash());
+                /*System.out.println("DEBUG - Stored hash: " + user.getPasswordHash());
                 System.out.println("DEBUG - Entered password: " + passwordPlaintext);
+                */
                 if (PasswordUtils.checkPassword(passwordPlaintext, user.getPasswordHash())) {
                     logger.info("Login successful: " + email);
                     return user;
