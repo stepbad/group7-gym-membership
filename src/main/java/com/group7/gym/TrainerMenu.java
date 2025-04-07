@@ -38,6 +38,12 @@ public class TrainerMenu {
             System.out.println("10. Logout");
             System.out.print("Choose an option: ");
 
+            if (!scanner.hasNextInt()) {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.nextLine();
+                continue;
+            }
+
             int choice = scanner.nextInt();
             scanner.nextLine();
 
@@ -64,12 +70,22 @@ public class TrainerMenu {
                     break;
                 case 4:
                     System.out.print("Enter class ID to assign: ");
+                    if (!scanner.hasNextInt()) {
+                        System.out.println("Invalid input. Please enter a valid class ID.");
+                        scanner.nextLine();
+                        break;
+                    }
                     int assignId = scanner.nextInt();
                     scanner.nextLine();
                     trainerService.assignToClass(assignId, trainer.getUserId());
                     break;
                 case 5:
                     System.out.print("Enter class ID to unassign: ");
+                    if (!scanner.hasNextInt()) {
+                        System.out.println("Invalid input. Please enter a valid class ID.");
+                        scanner.nextLine();
+                        break;
+                    }
                     int unassignId = scanner.nextInt();
                     scanner.nextLine();
                     workoutClassService.unassignTrainerFromClass(unassignId);
@@ -102,6 +118,11 @@ public class TrainerMenu {
                     break;
                 case 7:
                     System.out.print("Enter class ID to update: ");
+                    if (!scanner.hasNextInt()) {
+                        System.out.println("Invalid input. Please enter a valid class ID.");
+                        scanner.nextLine();
+                        break;
+                    }
                     int updateId = scanner.nextInt();
                     scanner.nextLine();
                     System.out.print("Enter new type: ");
@@ -114,7 +135,7 @@ public class TrainerMenu {
                     String newStart = scanner.nextLine();
                     System.out.print("Enter new end time (HH:MM, 24hr): ");
                     String newEnd = scanner.nextLine();
-                    
+
                     try {
                         WorkoutClass updated = new WorkoutClass(
                             updateId,
@@ -128,16 +149,26 @@ public class TrainerMenu {
                         workoutClassService.updateWorkoutClass(updated);
                     } catch (Exception e) {
                         System.err.println("Error: Invalid input format. " + e.getMessage());
-                    }                
+                    }
                     break;
                 case 8:
                     System.out.print("Enter class ID to delete: ");
+                    if (!scanner.hasNextInt()) {
+                        System.out.println("Invalid input. Please enter a valid class ID.");
+                        scanner.nextLine();
+                        break;
+                    }
                     int deleteId = scanner.nextInt();
                     scanner.nextLine();
                     workoutClassService.deleteWorkoutClass(deleteId);
                     break;
                 case 9:
                     System.out.print("Enter class ID to view roster: ");
+                    if (!scanner.hasNextInt()) {
+                        System.out.println("Invalid input. Please enter a valid class ID.");
+                        scanner.nextLine();
+                        break;
+                    }
                     int classId = scanner.nextInt();
                     scanner.nextLine();
                     trainerService.viewRoster(classId);

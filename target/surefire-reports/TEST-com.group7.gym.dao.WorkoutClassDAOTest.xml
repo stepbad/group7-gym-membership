@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.group7.gym.dao.UserDAOTest" time="0.317" tests="4" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.group7.gym.dao.WorkoutClassDAOTest" time="0.143" tests="3" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -59,13 +59,10 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="testGetAllUsers" classname="com.group7.gym.dao.UserDAOTest" time="0.209">
+  <testcase name="testAddAndGetWorkoutClassById" classname="com.group7.gym.dao.WorkoutClassDAOTest" time="0.043">
     <system-err><![CDATA[Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
 INFO: Database connection established.
-]]></system-err>
-  </testcase>
-  <testcase name="testUpdateTrainer" classname="com.group7.gym.dao.UserDAOTest" time="0.034">
-    <system-err><![CDATA[Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
+Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
 INFO: Database connection established.
 Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
 INFO: Database connection established.
@@ -73,20 +70,28 @@ Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
 INFO: Database connection established.
 ]]></system-err>
   </testcase>
-  <testcase name="testAddAndGetTrainerByEmail" classname="com.group7.gym.dao.UserDAOTest" time="0.026">
+  <testcase name="testDeleteWorkoutClass" classname="com.group7.gym.dao.WorkoutClassDAOTest" time="0.05">
     <system-err><![CDATA[Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
+INFO: Database connection established.
+Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
+INFO: Database connection established.
+Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
+INFO: Database connection established.
+Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
 INFO: Database connection established.
 Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
 INFO: Database connection established.
 ]]></system-err>
   </testcase>
-  <testcase name="testDeleteTrainer" classname="com.group7.gym.dao.UserDAOTest" time="0.036">
+  <testcase name="testUpdateWorkoutClass" classname="com.group7.gym.dao.WorkoutClassDAOTest" time="0.048">
     <system-err><![CDATA[Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
 INFO: Database connection established.
 Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
 INFO: Database connection established.
-Apr 06, 2025 9:28:00 P.M. com.group7.gym.dao.UserDAO deleteUser
-INFO: User deleted successfully.
+Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
+INFO: Database connection established.
+Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
+INFO: Database connection established.
 Apr 06, 2025 9:28:00 P.M. com.group7.gym.DatabaseConnection getConnection
 INFO: Database connection established.
 ]]></system-err>
