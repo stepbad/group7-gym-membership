@@ -66,7 +66,7 @@ public class TrainerMenu {
                     trainerService.viewAssignedClasses(trainer.getUserId());
                     break;
                 case 3:
-                    workoutClassService.listAllWorkoutClasses();
+                    workoutClassService.listAllWorkoutClassesForTrainer();
                     break;
                 case 4:
                     System.out.print("Enter class ID to assign: ");

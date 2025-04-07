@@ -1,7 +1,6 @@
 package com.group7.gym.dao;
 
 import com.group7.gym.DatabaseConnection;
-
 import com.group7.gym.models.Member;
 import com.group7.gym.models.WorkoutClass;
 
@@ -20,21 +19,21 @@ public class MemberClassDAO {
     /**
      * Returns a list of members assigned to a specific class.
      *
-     * @param classId ID of the workout class
+     * @param workoutClassId ID of the workout class
      * @return List of Member objects
      */
-    public List<Member> getMembersByClassId(int classId) {
+    public List<Member> getMembersByClassId(int workoutClassId) {
         List<Member> members = new ArrayList<>();
         String sql = "SELECT u.user_id, u.username, u.password_hash, u.email, u.phone, u.address, m.membership_id, m.balance " +
-                     "FROM member_class mc " +
-                     "JOIN users u ON mc.member_id = u.user_id " +
-                     "JOIN members m ON mc.member_id = m.user_id " +
-                     "WHERE mc.class_id = ?";
+                "FROM member_class mc " +
+                "JOIN users u ON mc.member_id = u.user_id " +
+                "JOIN memberships m ON mc.member_id = m.member_id " +
+                "WHERE mc.workout_class_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, classId);
+            stmt.setInt(1, workoutClassId);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -67,9 +66,9 @@ public class MemberClassDAO {
 
     public List<WorkoutClass> getClassesByMemberId(int memberId) throws SQLException {
         List<WorkoutClass> classes = new ArrayList<>();
-        String sql = "SELECT wc.workout_class_id, wc.type, wc.description, wc.trainer_id " +
+        String sql = "SELECT wc.workout_class_id, wc.type, wc.description, wc.trainer_id, wc.start_time, wc.end_time, wc.class_date " +
                 "FROM workout_classes wc " +
-                "JOIN member_class mc ON wc.workout_class_id = mc.class_id " +
+                "JOIN member_class mc ON wc.workout_class_id = mc.workout_class_id " +
                 "WHERE mc.member_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -82,7 +81,10 @@ public class MemberClassDAO {
                             rs.getInt("workout_class_id"),
                             rs.getString("type"),        // Using 'type' instead of 'className'
                             rs.getString("description"),
-                            rs.getInt("trainer_id")// Using schedule
+                            rs.getInt("trainer_id"),
+                            rs.getTime("start_time").toLocalTime(),
+                            rs.getTime("end_time").toLocalTime(),
+                            rs.getDate("class_date").toLocalDate()
                     );
                     classes.add(workoutClass);
                 }
@@ -96,17 +98,17 @@ public class MemberClassDAO {
      * Checks if a member is enrolled in a specific class.
      *
      * @param memberId The ID of the member
-     * @param classId  The ID of the class
+     * @param workoutClassId  The ID of the class
      * @return true if the member is enrolled, false otherwise
      * @throws SQLException if a database error occurs
      */
-    public boolean isMemberEnrolledInClass(int memberId, int classId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM member_class WHERE member_id = ? AND class_id = ?";
+    public boolean isMemberEnrolledInClass(int memberId, int workoutClassId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM member_class WHERE member_id = ? AND workout_class_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, memberId);
-            stmt.setInt(2, classId);
+            stmt.setInt(2, workoutClassId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -122,17 +124,17 @@ public class MemberClassDAO {
      * Adds a member to a workout class.
      *
      * @param memberId The ID of the member
-     * @param classId  The ID of the class
+     * @param workoutClassId  The ID of the class
      * @throws SQLException if a database error occurs
      */
 
-    public void addMemberToClass(int memberId, int classId) throws SQLException {
-        String sql = "INSERT INTO member_class (member_id, class_id) VALUES (?, ?)";
+    public void addMemberToClass(int memberId, int workoutClassId) throws SQLException {
+        String sql = "INSERT INTO member_class (member_id, workout_class_id) VALUES (?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, memberId);
-            stmt.setInt(2, classId);
+            stmt.setInt(2, workoutClassId);
             stmt.executeUpdate();
         }
     }
