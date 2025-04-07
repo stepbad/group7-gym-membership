@@ -25,10 +25,10 @@ public class AdminMenu {
         while (true) {
             System.out.println("\n========== Admin Menu ==========");
             System.out.println("1. View My Profile");
-            System.out.println("4. View All Users");
-            System.out.println("5. Delete User by ID");
-            System.out.println("6. View Memberships & Revenue");
-            System.out.println("7. Logout");
+            System.out.println("2. View All Users");
+            System.out.println("3. Delete User by ID");
+            System.out.println("4. View Memberships & Revenue");
+            System.out.println("5. Logout");
             System.out.print("Choose an option: ");
 
             int choice;
