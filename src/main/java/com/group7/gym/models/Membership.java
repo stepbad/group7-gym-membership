@@ -10,10 +10,8 @@ public class Membership {
     private String membershipDescription;
     private double membershipCost;
     private int memberId;
-
     private LocalDate startDate;
     private LocalDate endDate;
-
     /**
      * Default constructor.
      */
@@ -25,13 +23,15 @@ public class Membership {
     public Membership(int membershipId, String membershipType, String membershipDescription,
                       double membershipCost, int memberId, LocalDate startDate, LocalDate endDate) {
         this.membershipId = membershipId;
-        this.memberId = memberId;
         this.membershipType = membershipType;
         this.membershipDescription = membershipDescription;
         this.membershipCost = membershipCost;
+        this.memberId = memberId;
         this.startDate = startDate;
         this.endDate = endDate;
     }
+
+
 
     /**
      * Full constructor for creating a membership object.
@@ -120,9 +120,9 @@ public class Membership {
                 ", membershipType='" + membershipType + '\'' +
                 ", membershipDescription='" + membershipDescription + '\'' +
                 ", membershipCost=" + membershipCost +
+                ", memberId=" + memberId +
                 ", startDate=" + startDate +  // Include startDate in toString
                 ", endDate=" + endDate +      // Include endDate in toString
-                ", memberId=" + memberId +
                 '}';
     }
 }

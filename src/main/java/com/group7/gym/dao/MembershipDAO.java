@@ -26,7 +26,7 @@ public class MembershipDAO {
             logger.severe("Membership type cannot be null or empty.");
             return false;
         }
-        String sql = "INSERT INTO memberships (membership_type, membership_description, membership_cost, member_id) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO memberships (membership_type, membership_description, membership_cost, member_id, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -35,6 +35,8 @@ public class MembershipDAO {
             stmt.setString(2, membership.getMembershipDescription());
             stmt.setDouble(3, membership.getMembershipCost());
             stmt.setInt(4, membership.getMemberId());
+            stmt.setDate(5, Date.valueOf(membership.getStartDate())); // Ensure startDate is set in the Membership object
+            stmt.setDate(6, Date.valueOf(membership.getEndDate()));   // Set endDate here
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -66,7 +68,9 @@ public class MembershipDAO {
                         rs.getString("membership_type"),
                         rs.getString("membership_description"),
                         rs.getDouble("membership_cost"),
-                        rs.getInt("member_id")
+                        rs.getInt("member_id"),
+                        rs.getDate("start_date").toLocalDate(), // Add start_date
+                        rs.getDate("end_date").toLocalDate()
                 );
             }
 
@@ -98,7 +102,9 @@ public class MembershipDAO {
                         rs.getString("membership_type"),
                         rs.getString("membership_description"),
                         rs.getDouble("membership_cost"),
-                        rs.getInt("member_id")
+                        rs.getInt("member_id"),
+                        rs.getDate("start_date").toLocalDate(),
+                        rs.getDate("end_date").toLocalDate()
                 );
                 memberships.add(membership);
             }
@@ -118,7 +124,7 @@ public class MembershipDAO {
      */
     public List<Membership> getAllMemberships() {
         List<Membership> memberships = new ArrayList<>();
-        String sql = "SELECT * FROM memberships";
+        String sql = "SELECT * FROM memberships WHERE end_date >= CURRENT_DATE";
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -130,7 +136,9 @@ public class MembershipDAO {
                         rs.getString("membership_type"),
                         rs.getString("membership_description"),
                         rs.getDouble("membership_cost"),
-                        rs.getInt("member_id")
+                        rs.getInt("member_id"),
+                        rs.getDate("start_date").toLocalDate(),
+                        rs.getDate("end_date").toLocalDate()
                 );
                 memberships.add(membership);
             }
