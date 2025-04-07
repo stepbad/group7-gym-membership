@@ -8,6 +8,7 @@ import com.group7.gym.service.WorkoutClassService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MemberMenu {
@@ -16,6 +17,9 @@ public class MemberMenu {
     private final WorkoutClassService workoutClassService;
     private final MembershipService membershipService;
     private final User member;
+
+
+
 
     // Constructor that takes the necessary services and user
     public MemberMenu(Scanner scanner, MemberService memberService, WorkoutClassService workoutClassService, MembershipService membershipService, User member) {
@@ -66,56 +70,107 @@ public class MemberMenu {
     // Method to view membership expenses
     private void viewMembershipExpenses() {
         List<Membership> memberships = membershipService.getMembershipsByMemberId(member.getUserId());
+
         if (memberships.isEmpty()) {
             System.out.println("No memberships found for your account.");
-        } else {
-            double total = 0;
-            System.out.println("\nYour Memberships:");
-            for (Membership membership : memberships) {
-                System.out.println(membership);
-                total += membership.getMembershipCost();
-            }
-            System.out.println("Total Expenses: $" + total);
+            return;
         }
+
+        double activeTotal = 0.0;
+
+        System.out.println("\nYour Memberships:");
+        System.out.printf("%-20s%-10s%-10s%n", "Membership Type", "Cost", "Status");
+        System.out.println("----------------------------------------------");
+
+        for (Membership membership : memberships) {
+            String status = calculateMembershipStatus(membership);
+
+            System.out.printf("%-20s$%-10.2f%-10s%n", membership.getMembershipType(), membership.getMembershipCost(), status);
+
+            if ("Active".equals(status)) {
+                activeTotal += membership.getMembershipCost();
+            }
+        }
+
+        System.out.println("\n--- Membership Report ---");
+        System.out.printf("Total Active Memberships Cost: $%.2f%n", activeTotal);
     }
+
+    // Helper method to calculate membership status
+    private String calculateMembershipStatus(Membership membership) {
+        if (membership.getEndDate() == null) {
+            return "Active"; // If no end date, assume active
+        }
+        return LocalDate.now().isAfter(membership.getEndDate()) ? "Expired" : "Active";
+    }
+
+
 
     // Method to purchase a new gym membership
     private void purchaseNewMembership() {
-        System.out.print("Options: Gold: 30$, Silver:50$, Platinum:80$");
-        // Ask for membership type
-        System.out.print("\nEnter membership type (G, S, P): ");
-        String membershipType = scanner.nextLine().toUpperCase();
+        while (true) {
+            System.out.println("\n--- Available Membership Options ---");
+            System.out.println("1. P - Platinum ($80): All Gold benefits + VIP lounge, personal locker.");
+            System.out.println("2. G - Gold ($50): Access to all classes, priority booking, free trainer sessions.");
+            System.out.println("3. S - Silver ($30): Access to most classes, standard booking.");
+            System.out.println("4. D - Daily ($5): One day access to gym facilities.");
+            System.out.println("5. Exit ");
+            System.out.print("\nChoose an option (1-5): ");
 
-        System.out.print("Enter membership cost: ");
-        double cost;
-        try {
-            cost = Double.parseDouble(scanner.nextLine());  // Parses cost entered by the user
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Cost must be a number.");
-            return;
+
+            int choice;
+            try {
+                choice = Integer.parseInt(scanner.nextLine());  // Ensures that user input is correctly parsed as an integer
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
+
+            String membershipType = "";
+            double cost = 0.0;
+            String description = "";
+
+
+            switch (choice) {
+                case 1:
+                    membershipType = "Platinum";
+                    cost = 80.0;
+                    description = "All Gold benefits + VIP lounge, personal locker.";
+                    break;
+                case 2:
+                    membershipType = "Gold";
+                    cost = 50.0;
+                    description = "Access to all classes, priority booking, free trainer sessions.";
+                    break;
+                case 3:
+                    membershipType = "Silver";
+                    cost = 30.0;
+                    description = "Access to most classes, standard booking.";
+                    break;
+                case 4:
+                    membershipType = "Daily";
+                    cost = 5.0;
+                    description = "One day access to gym facilities.";
+                    break;
+                case 5:
+                    System.out.println("Exiting membership purchase...");
+                    return; // Exit the purchase method
+                default:
+                    System.out.println("Invalid choice. Please select between 1-5.");
+                    continue;
+            }
+
+            LocalDate startDate = LocalDate.now();
+            LocalDate endDate = membershipType.equals("Daily") ? startDate : startDate.plusMonths(1);
+            String status = "Active";
+
+            Membership newMembership = new Membership(0, membershipType, description, cost, member.getUserId(), startDate, endDate);
+            membershipService.addMembership(newMembership);
+
+            System.out.println("Membership purchased successfully: " + membershipType + " for $" + cost);
+            break; // After purchase, exit the loop
+
         }
 
-        if (cost <= 0) {
-            System.out.println("Cost must be greater than 0.");
-            return;
-        }
-
-
-
-        // Creating and setting up the new membership
-        Membership membership = new Membership();
-        membership.setMemberId(member.getUserId());  // Set the member ID from the logged-in user
-        membership.setMembershipCost(cost);  // Set the membership cost entered by the user
-        membership.setMembershipType(membershipType);
-        membership.setStartDate(LocalDate.now());  // Set the start date to the current date
-        membership.setEndDate(LocalDate.now().plusMonths(1));  // Set the end date to 1 month from now
-
-        // Adding the membership to the system
-        boolean success = membershipService.addMembership(membership);
-        if (success) {
-            System.out.println("New membership purchased successfully!");
-        } else {
-            System.out.println("Failed to purchase membership.");
-        }
     }
 }

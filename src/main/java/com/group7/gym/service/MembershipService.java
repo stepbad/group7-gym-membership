@@ -2,9 +2,12 @@ package com.group7.gym.service;
 
 import java.util.List;
 import java.util.logging.Logger;
-
+import com.group7.gym.DatabaseConnection;
 import com.group7.gym.dao.MembershipDAO;
 import com.group7.gym.models.Membership;
+import java.sql.*;
+import java.time.LocalDate;
+
 
 /**
  * Service class for managing business logic related to memberships.
@@ -49,12 +52,45 @@ public class MembershipService {
     }
 
     public Membership getMembershipById(int membershipId) {
-        Membership membership = membershipDAO.getMembershipById(membershipId);
-        if (membership == null) {
-            logger.warning("Error: Membership not found with ID " + membershipId);
+        String sql = "SELECT * FROM memberships WHERE membership_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, membershipId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                // Check if start_date and end_date are not null before converting
+                Date startDateSQL = rs.getDate("start_date");
+                Date endDateSQL = rs.getDate("end_date");
+
+                LocalDate startDate = (startDateSQL != null) ? startDateSQL.toLocalDate() : null;
+                LocalDate endDate = (endDateSQL != null) ? endDateSQL.toLocalDate() : null;
+
+                // If startDate or endDate is null, handle gracefully
+                if (startDate == null || endDate == null) {
+                    logger.severe("Start date or end date is null for membership ID " + membershipId);
+                }
+
+                // Create Membership object
+                return new Membership(
+                        rs.getInt("membership_id"),
+                        rs.getString("membership_type"),
+                        rs.getString("membership_description"),
+                        rs.getDouble("membership_cost"),
+                        rs.getInt("member_id"),
+                        startDate,
+                        endDate
+                );
+            }
+
+        } catch (SQLException e) {
+            logger.severe("Error retrieving membership: " + e.getMessage());
         }
-        return membership;
+        return null;
     }
+
 
     public List<Membership> getAllMemberships() {
         List<Membership> memberships = membershipDAO.getAllMemberships();
@@ -75,15 +111,25 @@ public class MembershipService {
             return false;
         }
 
-        if (membershipDAO.getMembershipById(membership.getMembershipId()) == null) {
-            logger.warning("Error: Membership not found with ID " + membership.getMembershipId());
+        String sql = "UPDATE memberships SET membership_type = ?, membership_description = ?, membership_cost = ?, end_date = ? WHERE membership_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, membership.getMembershipType());
+            stmt.setString(2, membership.getMembershipDescription());
+            stmt.setDouble(3, membership.getMembershipCost());
+            stmt.setDate(4, Date.valueOf(membership.getEndDate()));   // Update endDate here
+            stmt.setInt(6, membership.getMembershipId());
+
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+
+        } catch (SQLException e) {
+            logger.severe("Error updating membership: " + e.getMessage());
             return false;
         }
-        boolean result = membershipDAO.updateMembership(membership);
-        if (result) {
-            logger.info("Membership updated successfully.");
-        }
-        return result;
+
     }
 
     public boolean deleteMembership(int membershipId) {
