@@ -25,8 +25,6 @@ public class AdminMenu {
         while (true) {
             System.out.println("\n========== Admin Menu ==========");
             System.out.println("1. View My Profile");
-            System.out.println("2. View All Admins");
-            System.out.println("3. Delete Admin by ID");
             System.out.println("4. View All Users");
             System.out.println("5. Delete User by ID");
             System.out.println("6. View Memberships & Revenue");
@@ -56,27 +54,6 @@ public class AdminMenu {
                     }
                     break;
                 case 2:
-                    System.out.println("----- View All Admins -----");
-                    var admins = adminService.getAllAdmins();
-                    if (admins.isEmpty()) {
-                        System.out.println("No admins found.");
-                    } else {
-                        for (Admin admin : admins) {
-                            System.out.println(admin);
-                        }
-                    }
-                    break;
-                case 3:
-                    System.out.print("Enter admin ID to delete: ");
-                    try {
-                        int id = Integer.parseInt(scanner.nextLine());
-                        boolean deleted = adminService.deleteAdmin(id);
-                        System.out.println(deleted ? "Admin deleted." : "Admin not found or error occurred.");
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid ID format.");
-                    }
-                    break;
-                case 4:
                     System.out.println("----- View All Users -----");
                     List<User> users = adminService.getAllUsers();
                     if (users.isEmpty()) {
@@ -87,7 +64,7 @@ public class AdminMenu {
                         }
                     }
                     break;
-                case 5:
+                case 3:
                     System.out.print("Enter user ID to delete: ");
                     try {
                         int userId = Integer.parseInt(scanner.nextLine());
@@ -97,12 +74,12 @@ public class AdminMenu {
                         System.out.println("Invalid ID format.");
                     }
                     break;
-                case 6:
+                case 4:
                     System.out.println("----- Memberships & Revenue -----");
                     double totalRevenue = membershipService.getTotalRevenue();
                     System.out.printf("Total Revenue: $%.2f\n", totalRevenue);
                     break;
-                case 7:
+                case 5:
                     System.out.println("Logging out...");
                     return;
                 default:
