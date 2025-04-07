@@ -1,25 +1,32 @@
 package com.group7.gym.service;
 
+import com.group7.gym.dao.AdminDAO;
+import com.group7.gym.dao.UserDAO;
+import com.group7.gym.models.Admin;
+import com.group7.gym.models.User;
+
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.group7.gym.dao.AdminDAO;
-import com.group7.gym.models.Admin;
-
 /**
- * Service class for handling business logic related to Admin users.
+ * Service class for handling business logic related to Admins and Users.
  */
 public class AdminService {
 
     private static final Logger logger = Logger.getLogger(AdminService.class.getName());
-    private AdminDAO adminDAO;
+
+    private final AdminDAO adminDAO;
+    private final UserDAO userDAO;
 
     /**
-     * Constructs the AdminService and initializes its DAO.
+     * Constructs the AdminService and initializes its DAOs.
      */
     public AdminService() {
         this.adminDAO = new AdminDAO();
+        this.userDAO = new UserDAO();
     }
+
+    // ----------------- Admin Methods -----------------
 
     /**
      * Retrieves an admin by ID.
@@ -112,6 +119,38 @@ public class AdminService {
         boolean result = adminDAO.deleteAdmin(adminId);
         if (result) {
             logger.info("Admin deleted successfully.");
+        }
+        return result;
+    }
+
+    /**
+     * Retrieves all users in the system.
+     *
+     * @return List of User objects
+     */
+    public List<User> getAllUsers() {
+        List<User> users = userDAO.getAllUsers();
+        if (users.isEmpty()) {
+            logger.info("No users found.");
+        }
+        return users;
+    }
+
+    /**
+     * Deletes a user by ID after verifying existence.
+     *
+     * @param userId ID of the user to delete
+     * @return true if deleted successfully
+     */
+    public boolean deleteUser(int userId) {
+        User user = userDAO.getUserById(userId);
+        if (user == null) {
+            logger.warning("Error: User not found. Cannot delete.");
+            return false;
+        }
+        boolean result = userDAO.deleteUser(userId);
+        if (result) {
+            logger.info("User deleted successfully.");
         }
         return result;
     }
