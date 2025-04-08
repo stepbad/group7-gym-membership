@@ -4,7 +4,6 @@ title Gym Management System - Class Diagram
 
 class User {
     - int userId
-    - String username
     - String passwordHash
     - String email
     - String phone
@@ -13,14 +12,20 @@ class User {
 }
 
 class Admin extends User
-class Trainer extends User
-class Member extends User
+class Trainer extends User {
+    - List<Integer> assignedClassIds
+}
+
+class Member extends User {
+    - List<Integer> enrolledClassIds
+}
 
 class Membership {
     - int membershipId
     - int memberId
     - String membershipType
     - double membershipCost
+    - int credits
     - Date startDate
     - Date endDate
 }
@@ -33,11 +38,17 @@ class WorkoutClass {
     - int trainerId
 }
 
+class MemberClass {
+    - int memberId
+    - int classId
+}
+
 User <|-- Admin
 User <|-- Trainer
 User <|-- Member
 Member "1" -- "0..*" Membership
 Trainer "1" -- "0..*" WorkoutClass
+Member "1" -- "0..*" MemberClass
+WorkoutClass "1" -- "0..*" MemberClass
 
 @enduml
-
