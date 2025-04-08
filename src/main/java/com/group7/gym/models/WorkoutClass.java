@@ -23,6 +23,8 @@ public class WorkoutClass {
         this.description = description;
         this.trainerId = trainerId;
     }
+
+
     /**
      * Full constructor for WorkoutClass including ID and scheduling.
      *
@@ -117,25 +119,25 @@ public class WorkoutClass {
     }
 
     DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MMM dd, yyyy");
-DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("hh:mm a");
+    DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("hh:mm a");
 
-@Override
-public String toString() {
-    return String.format(
-        "\n[Class ID: %d]\n" +
-        "Type       : %s\n" +
-        "Description: %s\n" +
-        "Trainer ID : %d\n" +
-        "Date       : %s\n" +
-        "Time       : %s - %s\n",
-        workoutClassId,
-        type,
-        description,
-        trainerId,
-        classDate.format(dateFormat),
-        startTime.format(timeFormat),
-        endTime.format(timeFormat)
-    );
-}
+    @Override
+    public String toString() {
+        return String.format(
+            "\n[Class ID: %d]\n" +
+            "Type       : %s\n" +
+            "Description: %s\n" +
+            "Trainer ID : %d\n" +
+            "Date       : %s\n" +
+            "Time       : %s - %s\n",
+            workoutClassId,
+            type,
+            description,
+            trainerId,
+            classDate.format(dateFormat),
+            startTime.format(timeFormat),
+            endTime.format(timeFormat)
+        );
+    }
 
 }

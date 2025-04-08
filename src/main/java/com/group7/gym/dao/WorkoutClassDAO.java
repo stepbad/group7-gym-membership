@@ -80,8 +80,8 @@ public class WorkoutClassDAO {
      * @throws SQLException if a database error occurs
      */
     public WorkoutClass getWorkoutClassById(int id) throws SQLException {
-        String sql = "SELECT * FROM workout_classes WHERE workout_class_id = ?";
-
+        String sql = "SELECT workout_class_id, type, description, trainer_id, start_time, end_time, class_date " +
+                "FROM workout_classes WHERE workout_class_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 

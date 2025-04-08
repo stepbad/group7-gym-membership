@@ -1,5 +1,6 @@
 package com.group7.gym;
 
+
 import com.group7.gym.models.Membership;
 import com.group7.gym.models.User;
 import com.group7.gym.service.MemberService;
@@ -8,7 +9,6 @@ import com.group7.gym.service.WorkoutClassService;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MemberMenu {
@@ -50,7 +50,11 @@ public class MemberMenu {
 
             switch (choice) {
                 case 1:
-                    workoutClassService.listAllWorkoutClasses();
+                    if (member instanceof com.group7.gym.models.Member) {
+                        workoutClassService.browseWorkoutClasses((com.group7.gym.models.Member) member);
+                    } else {
+                        System.out.println("Error: This option is only available for members.");
+                    }
                     break;
                 case 2:
                     viewMembershipExpenses();
