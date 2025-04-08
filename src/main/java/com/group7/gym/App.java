@@ -17,9 +17,9 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         UserDAO userDAO = new UserDAO();
         UserService userService = new UserService();
-        MembershipService membershipService = new MembershipService(); // New MembershipService
+        MembershipService membershipService = new MembershipService();
         MemberService memberService = new MemberService();
-        WorkoutClassService workoutClassService = new WorkoutClassService();
+        WorkoutClassService workoutClassService = new WorkoutClassService(scanner);
 
         System.out.println("Welcome to Gym Management System!");
 
@@ -28,8 +28,13 @@ public class App {
             System.out.println("2. Login");
             System.out.println("3. Exit");
             System.out.print("Enter choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            int choice;
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
 
             if (choice == 1) {
                 System.out.print("Enter Username: ");
@@ -78,7 +83,6 @@ public class App {
                         continue;
                 }
 
-
                 userService.registerUser(newUser);
 
             } else if (choice == 2) {
@@ -92,13 +96,13 @@ public class App {
                     System.out.println("Login Successful! Welcome, " + user.getUsername());
                     switch (user.getRole().toLowerCase()) {
                         case "admin":
-                            new AdminMenu(scanner, new AdminService(), new MembershipService(), user).show();
+                            new AdminMenu(scanner, new AdminService(), membershipService, user).show();
                             break;
                         case "trainer":
-                            new TrainerMenu(scanner, new TrainerService(), new WorkoutClassService(), user).show();
+                            new TrainerMenu(scanner, new TrainerService(), workoutClassService, user).show();
                             break;
                         case "member":
-                            new MemberMenu(scanner, new MemberService(), new WorkoutClassService(), new MembershipService(), user).show();
+                            new MemberMenu(scanner, memberService, workoutClassService, membershipService, user).show();
                             break;
                         default:
                             System.out.println("Unknown role.");

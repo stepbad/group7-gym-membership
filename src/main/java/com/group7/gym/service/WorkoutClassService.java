@@ -16,14 +16,16 @@ import java.util.Scanner;
  */
 public class WorkoutClassService {
 
+    private final Scanner scanner;
     private WorkoutClassDAO workoutClassDAO;
     private MemberClassDAO memberClassDAO;
     private MembershipDAO membershipDAO;
 
     /**
-     * Constructs a WorkoutClassService and initializes the DAO.
+     * Constructs a WorkoutClassService with a shared Scanner and initializes the DAOs.
      */
-    public WorkoutClassService() {
+    public WorkoutClassService(Scanner scanner) {
+        this.scanner = scanner;
         this.workoutClassDAO = new WorkoutClassDAO();
         this.memberClassDAO = new MemberClassDAO();
         this.membershipDAO = new MembershipDAO();
@@ -100,18 +102,16 @@ public class WorkoutClassService {
 
             // Prompt to register
             if (!allClasses.isEmpty()) {
-                try (Scanner scanner = new Scanner(System.in)) {
-                    System.out.print("\nEnter the Class ID to register (or 0 to return): ");
-                    if (scanner.hasNextInt()) {
-                        int workoutClassId = scanner.nextInt();
-                        scanner.nextLine();
-                        if (workoutClassId != 0) {
-                            registerForClass(member, workoutClassId);
-                        }
-                    } else {
-                        System.out.println("Invalid input. Please enter a number.");
-                        scanner.nextLine();
+                System.out.print("\nEnter the Class ID to register (or 0 to return): ");
+                if (scanner.hasNextInt()) {
+                    int workoutClassId = scanner.nextInt();
+                    scanner.nextLine();
+                    if (workoutClassId != 0) {
+                        registerForClass(member, workoutClassId);
                     }
+                } else {
+                    System.out.println("Invalid input. Please enter a number.");
+                    scanner.nextLine();
                 }
             }
 
@@ -125,16 +125,16 @@ public class WorkoutClassService {
      * Deducts 1 credit (=$5) upon success.
      */
     public void joinWorkoutClass(int memberId) {
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the ID of the workout class you want to join: ");
         int classId = scanner.nextInt();
-    
+        scanner.nextLine();
+
         int credits = membershipDAO.getCreditsByMemberId(memberId);
         if (credits < 1) {
             System.out.println("Insufficient credits. You need at least 1 credit to join.");
             return;
         }
-    
+
         boolean enrolled = memberClassDAO.enrollMember(memberId, classId);
         if (enrolled) {
             membershipDAO.deductCredits(memberId, 1);
@@ -143,8 +143,6 @@ public class WorkoutClassService {
             System.out.println("Failed to join class. Please try again or contact support.");
         }
     }
-    
-
 
     /**
      * Registers a member for a workout class after checking credit eligibility.
@@ -197,6 +195,7 @@ public class WorkoutClassService {
             System.err.println("Error registering for class: " + e.getMessage());
         }
     }
+
     /**
      * Retrieves the list of members enrolled in a specific workout class.
      *
@@ -207,14 +206,13 @@ public class WorkoutClassService {
         MemberClassDAO memberClassDAO = new MemberClassDAO();
         return memberClassDAO.getMembersByClassId(classId);
     }
-    
+
     /**
      * Unassigns a trainer from a workout class by setting trainer_id to NULL.
      *
      * @param workoutClassId ID of the workout class to update
      * @return true if successful, false otherwise
      */
-
     public boolean unassignTrainerFromClass(int workoutClassId) {
         String sql = "UPDATE workout_classes SET trainer_id = NULL WHERE workout_class_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -232,7 +230,6 @@ public class WorkoutClassService {
      *
      * @param updatedClass The updated WorkoutClass object
      */
-
     public void updateWorkoutClass(WorkoutClass updatedClass) {
         try {
             workoutClassDAO.updateWorkoutClass(updatedClass);
@@ -247,7 +244,6 @@ public class WorkoutClassService {
      *
      * @param classId ID of the class to delete
      */
-
     public void deleteWorkoutClass(int classId) {
         try {
             workoutClassDAO.deleteWorkoutClass(classId);
@@ -257,12 +253,11 @@ public class WorkoutClassService {
         }
     }
 
-     /**
+    /**
      * Displays details of a workout class by its ID.
      *
      * @param classId ID of the class to view details of.
      */
-
     public void getWorkoutClassDetails(int classId) {
         try {
             WorkoutClass wc = workoutClassDAO.getWorkoutClassById(classId);
