@@ -75,6 +75,52 @@ public class MembershipDAO {
     }
 
     /**
+     * Retrieves the number of credits for a given member.
+     *
+     * @param memberId ID of the member
+     * @return Number of credits, or -1 if not found/error
+     */
+    public int getCreditsByMemberId(int memberId) {
+        String sql = "SELECT credits FROM memberships WHERE member_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, memberId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("credits");
+            }
+        } catch (SQLException e) {
+            logger.warning("Error retrieving credits: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    /**
+     * Deducts a specified number of credits from a member's account.
+     *
+     * @param memberId ID of the member
+     * @param amount   Number of credits to deduct
+     * @return true if successful, false otherwise
+     */
+    public boolean deductCredits(int memberId, int amount) {
+        String sql = "UPDATE memberships SET credits = credits - ? WHERE member_id = ? AND credits >= ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, amount);
+            stmt.setInt(2, memberId);
+            stmt.setInt(3, amount);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            logger.warning("Error deducting credits: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Retrieves all memberships associated with a specific member.
      *
      * @param memberId ID of the member
@@ -200,6 +246,7 @@ public class MembershipDAO {
             return false;
         }
     }
+    
 
     /**
      * Returns total revenue collected from all memberships.
@@ -224,6 +271,7 @@ public class MembershipDAO {
 
         return totalRevenue;
     }
+
 
     /**
      * Helper method to extract a Membership object from a ResultSet.

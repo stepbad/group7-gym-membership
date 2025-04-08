@@ -18,6 +18,7 @@ public class WorkoutClassService {
 
     private WorkoutClassDAO workoutClassDAO;
     private MemberClassDAO memberClassDAO;
+    private MembershipDAO membershipDAO;
 
     /**
      * Constructs a WorkoutClassService and initializes the DAO.
@@ -25,6 +26,7 @@ public class WorkoutClassService {
     public WorkoutClassService() {
         this.workoutClassDAO = new WorkoutClassDAO();
         this.memberClassDAO = new MemberClassDAO();
+        this.membershipDAO = new MembershipDAO();
     }
 
     /**
@@ -117,6 +119,32 @@ public class WorkoutClassService {
             System.err.println("Error browsing workout classes: " + e.getMessage());
         }
     }
+
+    /**
+     * Allows a member to join a workout class if they have enough credits.
+     * Deducts 1 credit (=$5) upon success.
+     */
+    public void joinWorkoutClass(int memberId) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the ID of the workout class you want to join: ");
+        int classId = scanner.nextInt();
+    
+        int credits = membershipDAO.getCreditsByMemberId(memberId);
+        if (credits < 1) {
+            System.out.println("Insufficient credits. You need at least 1 credit to join.");
+            return;
+        }
+    
+        boolean enrolled = memberClassDAO.enrollMember(memberId, classId);
+        if (enrolled) {
+            membershipDAO.deductCredits(memberId, 1);
+            System.out.println("Successfully joined the class! 1 credit deducted.");
+        } else {
+            System.out.println("Failed to join class. Please try again or contact support.");
+        }
+    }
+    
+
 
     /**
      * Registers a member for a workout class after checking credit eligibility.
