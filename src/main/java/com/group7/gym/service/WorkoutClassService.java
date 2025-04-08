@@ -17,6 +17,7 @@ import java.util.Scanner;
 public class WorkoutClassService {
 
     private final Scanner scanner;
+    private final MembershipService membershipService;
     private WorkoutClassDAO workoutClassDAO;
     private MemberClassDAO memberClassDAO;
     private MembershipDAO membershipDAO;
@@ -26,6 +27,7 @@ public class WorkoutClassService {
      */
     public WorkoutClassService(Scanner scanner) {
         this.scanner = scanner;
+        this.membershipService = new MembershipService();
         this.workoutClassDAO = new WorkoutClassDAO();
         this.memberClassDAO = new MemberClassDAO();
         this.membershipDAO = new MembershipDAO();
@@ -70,7 +72,7 @@ public class WorkoutClassService {
      */
     public void browseWorkoutClasses(Member member) {
         try {
-            MembershipService membershipService = new MembershipService();
+            
             Membership membership = membershipService.getCurrentMembershipByMemberId(member.getUserId());
 
             System.out.println("\n--- Membership Summary ---");
@@ -163,7 +165,7 @@ public class WorkoutClassService {
                 return;
             }
 
-            MembershipService membershipService = new MembershipService();
+            
             Membership membership = membershipService.getCurrentMembershipByMemberId(member.getUserId());
 
             if (membership == null) {
