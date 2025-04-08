@@ -35,10 +35,12 @@ A Java-based console application that manages users, memberships, workout classe
 
 4. Build the project using Maven Daemon:
 
+    ```bash
     mvnd compile
 
 5. Run the application:
 
+   ```bash
     mvnd exec:java -Dexec.mainClass="com.gym.App"
 
 this will bring you to register/ login menu.
