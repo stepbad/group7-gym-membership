@@ -26,7 +26,8 @@ public class MembershipDAO {
             logger.severe("Membership type cannot be null or empty.");
             return false;
         }
-        String sql = "INSERT INTO memberships (membership_type, membership_description, membership_cost, member_id, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)";
+
+        String sql = "INSERT INTO memberships (membership_type, membership_description, membership_cost, member_id, start_date, end_date, available_credits) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -35,11 +36,11 @@ public class MembershipDAO {
             stmt.setString(2, membership.getMembershipDescription());
             stmt.setDouble(3, membership.getMembershipCost());
             stmt.setInt(4, membership.getMemberId());
-            stmt.setDate(5, Date.valueOf(membership.getStartDate())); // Ensure startDate is set in the Membership object
-            stmt.setDate(6, Date.valueOf(membership.getEndDate()));   // Set endDate here
+            stmt.setDate(5, Date.valueOf(membership.getStartDate()));
+            stmt.setDate(6, Date.valueOf(membership.getEndDate()));
+            stmt.setInt(7, membership.getAvailableCredits());
 
-            int affectedRows = stmt.executeUpdate();
-            return affectedRows > 0;
+            return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
             logger.severe("Error adding membership: " + e.getMessage());
@@ -48,7 +49,7 @@ public class MembershipDAO {
     }
 
     /**
-     * Retrieves a membership by ID.
+     * Retrieves a membership by its ID.
      *
      * @param membershipId ID of the membership
      * @return Membership object or null if not found
@@ -63,28 +64,21 @@ public class MembershipDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new Membership(
-                        rs.getInt("membership_id"),
-                        rs.getString("membership_type"),
-                        rs.getString("membership_description"),
-                        rs.getDouble("membership_cost"),
-                        rs.getInt("member_id"),
-                        rs.getDate("start_date").toLocalDate(), // Add start_date
-                        rs.getDate("end_date").toLocalDate()
-                );
+                return extractMembership(rs);
             }
 
         } catch (SQLException e) {
             logger.severe("Error retrieving membership: " + e.getMessage());
         }
+
         return null;
     }
 
     /**
-     * Retrieves all memberships associated with a specific member ID.
+     * Retrieves all memberships associated with a specific member.
      *
      * @param memberId ID of the member
-     * @return List of Membership objects associated with the member
+     * @return List of Membership objects
      */
     public List<Membership> getMembershipsByMemberId(int memberId) {
         List<Membership> memberships = new ArrayList<>();
@@ -97,16 +91,7 @@ public class MembershipDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Membership membership = new Membership(
-                        rs.getInt("membership_id"),
-                        rs.getString("membership_type"),
-                        rs.getString("membership_description"),
-                        rs.getDouble("membership_cost"),
-                        rs.getInt("member_id"),
-                        rs.getDate("start_date").toLocalDate(),
-                        rs.getDate("end_date").toLocalDate()
-                );
-                memberships.add(membership);
+                memberships.add(extractMembership(rs));
             }
 
         } catch (SQLException e) {
@@ -116,11 +101,10 @@ public class MembershipDAO {
         return memberships;
     }
 
-
     /**
-     * Retrieves all memberships from the database.
+     * Retrieves all current memberships.
      *
-     * @return List of Membership objects
+     * @return List of valid Membership objects
      */
     public List<Membership> getAllMemberships() {
         List<Membership> memberships = new ArrayList<>();
@@ -131,37 +115,29 @@ public class MembershipDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Membership membership = new Membership(
-                        rs.getInt("membership_id"),
-                        rs.getString("membership_type"),
-                        rs.getString("membership_description"),
-                        rs.getDouble("membership_cost"),
-                        rs.getInt("member_id"),
-                        rs.getDate("start_date").toLocalDate(),
-                        rs.getDate("end_date").toLocalDate()
-                );
-                memberships.add(membership);
+                memberships.add(extractMembership(rs));
             }
 
         } catch (SQLException e) {
             logger.severe("Error retrieving memberships: " + e.getMessage());
         }
+
         return memberships;
     }
 
     /**
-     * Updates an existing membership record in the database.
+     * Updates a membership's details.
      *
-     * @param membership Membership object with updated values
-     * @return true if successful, false otherwise
+     * @param membership Updated Membership object
+     * @return true if update is successful, false otherwise
      */
     public boolean updateMembership(Membership membership) {
-        // Ensure membership type is not null
         if (membership.getMembershipType() == null || membership.getMembershipType().isEmpty()) {
             logger.severe("Membership type cannot be null or empty.");
             return false;
         }
-        String sql = "UPDATE memberships SET membership_type = ?, membership_description = ?, membership_cost = ? WHERE membership_id = ?";
+
+        String sql = "UPDATE memberships SET membership_type = ?, membership_description = ?, membership_cost = ?, available_credits = ? WHERE membership_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -169,10 +145,10 @@ public class MembershipDAO {
             stmt.setString(1, membership.getMembershipType());
             stmt.setString(2, membership.getMembershipDescription());
             stmt.setDouble(3, membership.getMembershipCost());
-            stmt.setInt(4, membership.getMembershipId());
+            stmt.setInt(4, membership.getAvailableCredits());
+            stmt.setInt(5, membership.getMembershipId());
 
-            int affectedRows = stmt.executeUpdate();
-            return affectedRows > 0;
+            return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
             logger.severe("Error updating membership: " + e.getMessage());
@@ -181,10 +157,10 @@ public class MembershipDAO {
     }
 
     /**
-     * Deletes a membership from the database by ID.
+     * Deletes a membership by ID.
      *
      * @param membershipId ID of the membership to delete
-     * @return true if deleted successfully, false otherwise
+     * @return true if successful, false otherwise
      */
     public boolean deleteMembership(int membershipId) {
         String sql = "DELETE FROM memberships WHERE membership_id = ?";
@@ -193,8 +169,7 @@ public class MembershipDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, membershipId);
-            int affectedRows = stmt.executeUpdate();
-            return affectedRows > 0;
+            return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
             logger.severe("Error deleting membership: " + e.getMessage());
@@ -203,9 +178,33 @@ public class MembershipDAO {
     }
 
     /**
-     * Calculates total revenue from all memberships.
+     * Updates only the available credits for a membership.
      *
-     * @return Sum of all membership_cost values
+     * @param membershipId ID of the membership
+     * @param newCreditCount Updated credit value
+     * @return true if updated successfully, false otherwise
+     */
+    public boolean updateAvailableCredits(int membershipId, int newCreditCount) {
+        String sql = "UPDATE memberships SET available_credits = ? WHERE membership_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, newCreditCount);
+            stmt.setInt(2, membershipId);
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            logger.severe("Error updating available credits: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Returns total revenue collected from all memberships.
+     *
+     * @return Double value of total revenue
      */
     public double getTotalRevenue() {
         String sql = "SELECT SUM(membership_cost) AS total_revenue FROM memberships";
@@ -224,5 +223,25 @@ public class MembershipDAO {
         }
 
         return totalRevenue;
+    }
+
+    /**
+     * Helper method to extract a Membership object from a ResultSet.
+     *
+     * @param rs The current result set
+     * @return Populated Membership object
+     * @throws SQLException if fields are invalid
+     */
+    private Membership extractMembership(ResultSet rs) throws SQLException {
+        return new Membership(
+                rs.getInt("membership_id"),
+                rs.getString("membership_type"),
+                rs.getString("membership_description"),
+                rs.getDouble("membership_cost"),
+                rs.getInt("member_id"),
+                rs.getDate("start_date").toLocalDate(),
+                rs.getDate("end_date").toLocalDate(),
+                rs.getInt("available_credits")
+        );
     }
 }
