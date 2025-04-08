@@ -67,39 +67,6 @@ public class MemberClassDAO {
 
     return members;
 }
-
-    public List<Member> getMembersByClassId(int workoutClassId) {
-        List<Member> members = new ArrayList<>();
-        String sql = "SELECT u.user_id, u.username, u.password_hash, u.email, u.phone, u.address " +
-                     "FROM users u " +
-                     "JOIN member_class mc ON u.user_id = mc.member_id " +
-                     "WHERE mc.workout_class_id = ?";
-    
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-    
-            stmt.setInt(1, workoutClassId);
-            ResultSet rs = stmt.executeQuery();
-    
-            while (rs.next()) {
-                Member member = new Member(
-                        rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("password_hash"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
-                        rs.getString("address"),
-                        0,     // membershipId placeholder (not in users table)
-                        0.0    // totalMembershipExpenses balance placeholder
-                );
-                members.add(member);
-            }
-        } catch (SQLException e) {
-            logger.severe("Error fetching members for class: " + e.getMessage());
-        }
-    
-        return members;
-    }
     
 
     /**
