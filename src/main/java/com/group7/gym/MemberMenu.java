@@ -1,6 +1,5 @@
 package com.group7.gym;
 
-
 import com.group7.gym.models.Membership;
 import com.group7.gym.models.User;
 import com.group7.gym.service.MemberService;
@@ -18,10 +17,9 @@ public class MemberMenu {
     private final MembershipService membershipService;
     private final User member;
 
-
-
-
-    // Constructor that takes the necessary services and user
+    /**
+     * Constructs a MemberMenu with the necessary services and the logged-in user.
+     */
     public MemberMenu(Scanner scanner, MemberService memberService, WorkoutClassService workoutClassService, MembershipService membershipService, User member) {
         this.scanner = scanner;
         this.memberService = memberService;
@@ -30,7 +28,9 @@ public class MemberMenu {
         this.member = member;
     }
 
-    // Method to display the member menu and handle the actions
+    /**
+     * Displays the main menu for the member and handles user input.
+     */
     public void show() {
         while (true) {
             System.out.println("\n--- Member Menu ---");
@@ -42,7 +42,7 @@ public class MemberMenu {
 
             int choice;
             try {
-                choice = Integer.parseInt(scanner.nextLine());  // Ensures that user input is correctly parsed as an integer
+                choice = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number.");
                 continue;
@@ -64,14 +64,16 @@ public class MemberMenu {
                     break;
                 case 4:
                     System.out.println("Logging out...");
-                    return;  // Exit the loop and log out
+                    return;
                 default:
                     System.out.println("Invalid choice. Try again.");
             }
         }
     }
 
-    // Method to view membership expenses
+    /**
+     * Displays all memberships associated with the member along with their status and cost.
+     */
     private void viewMembershipExpenses() {
         List<Membership> memberships = membershipService.getMembershipsByMemberId(member.getUserId());
 
@@ -88,9 +90,7 @@ public class MemberMenu {
 
         for (Membership membership : memberships) {
             String status = calculateMembershipStatus(membership);
-
             System.out.printf("%-20s$%-10.2f%-10s%n", membership.getMembershipType(), membership.getMembershipCost(), status);
-
             if ("Active".equals(status)) {
                 activeTotal += membership.getMembershipCost();
             }
@@ -100,31 +100,34 @@ public class MemberMenu {
         System.out.printf("Total Active Memberships Cost: $%.2f%n", activeTotal);
     }
 
-    // Helper method to calculate membership status
+    /**
+     * Determines whether a given membership is currently active or expired.
+     */
     private String calculateMembershipStatus(Membership membership) {
         if (membership.getEndDate() == null) {
-            return "Active"; // If no end date, assume active
+            return "Active";
         }
         return LocalDate.now().isAfter(membership.getEndDate()) ? "Expired" : "Active";
     }
 
-
-
-    // Method to purchase a new gym membership
+    /**
+     * Allows the user to purchase a new membership, selecting from predefined options.
+     * Each membership type has a cost, description, and may include credits.
+     */
     private void purchaseNewMembership() {
         while (true) {
-            System.out.println("\n--- Available Membership Options ---");
-            System.out.println("1. P - Platinum ($80): All Gold benefits + VIP lounge, personal locker.");
-            System.out.println("2. G - Gold ($50): Access to all classes, priority booking, free trainer sessions.");
-            System.out.println("3. S - Silver ($30): Access to most classes, standard booking.");
-            System.out.println("4. D - Daily ($5): One day access to gym facilities.");
-            System.out.println("5. Exit ");
-            System.out.print("\nChoose an option (1-5): ");
-
+            System.out.println("--- Available Membership Options ---");
+            System.out.println("1. Platinum ($180): All Gold benefits + VIP lounge, personal locker. [30 credits]");
+            System.out.println("2. Gold ($100): Access to all classes, priority booking, free trainer sessions. [15 credits]");
+            System.out.println("3. Silver ($40): Access to GYM facilities. Purchase credit $5. [0 credits]");
+            System.out.println("4. Daily Basic ($8): One day access to gym facilities. [0 credits]");
+            System.out.println("5. Daily Premium ($30): One day access to VIP and all Platinum benefits. [0 credits]");
+            System.out.println("6. Exit");
+            System.out.print("Choose an option (1-6): ");
 
             int choice;
             try {
-                choice = Integer.parseInt(scanner.nextLine());  // Ensures that user input is correctly parsed as an integer
+                choice = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number.");
                 continue;
@@ -133,32 +136,42 @@ public class MemberMenu {
             String membershipType = "";
             double cost = 0.0;
             String description = "";
-
+            int credits = 0;
 
             switch (choice) {
                 case 1:
                     membershipType = "Platinum";
-                    cost = 80.0;
-                    description = "All Gold benefits + VIP lounge, personal locker.";
+                    cost = 180.0;
+                    description = "All Gold benefits + VIP lounge, personal locker, up to 6 free trainer sessions per month.";
+                    credits = 30;
                     break;
                 case 2:
                     membershipType = "Gold";
-                    cost = 50.0;
-                    description = "Access to all classes, priority booking, free trainer sessions.";
+                    cost = 100.0;
+                    description = "Access to Pool, Sauna, priority booking for classes, 2 free trainer sessions per month.";
+                    credits = 15;
                     break;
                 case 3:
                     membershipType = "Silver";
-                    cost = 30.0;
+                    cost = 40.0;
                     description = "Access to most classes, standard booking.";
+                    credits = 0;
                     break;
                 case 4:
-                    membershipType = "Daily";
-                    cost = 5.0;
+                    membershipType = "Daily Basic";
+                    cost = 8.0;
                     description = "One day access to gym facilities.";
+                    credits = 0;
                     break;
                 case 5:
+                    membershipType = "Daily Premium";
+                    cost = 30.0;
+                    description = "One day access to VIP and all Platinum benefits.";
+                    credits = 0;
+                    break;
+                case 6:
                     System.out.println("Exiting membership purchase...");
-                    return; // Exit the purchase method
+                    return;
                 default:
                     System.out.println("Invalid choice. Please select between 1-5.");
                     continue;
@@ -166,15 +179,12 @@ public class MemberMenu {
 
             LocalDate startDate = LocalDate.now();
             LocalDate endDate = membershipType.equals("Daily") ? startDate : startDate.plusMonths(1);
-            String status = "Active";
 
-            Membership newMembership = new Membership(0, membershipType, description, cost, member.getUserId(), startDate, endDate);
+            Membership newMembership = new Membership(0, membershipType, description, cost, member.getUserId(), startDate, endDate, credits);
             membershipService.addMembership(newMembership);
 
             System.out.println("Membership purchased successfully: " + membershipType + " for $" + cost);
-            break; // After purchase, exit the loop
-
+            break;
         }
-
     }
 }
