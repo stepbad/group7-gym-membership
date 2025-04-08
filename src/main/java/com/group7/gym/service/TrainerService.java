@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 import com.group7.gym.DatabaseConnection;
@@ -16,20 +17,17 @@ import com.group7.gym.models.*;
  */
 public class TrainerService {
     private TrainerDAO trainerDAO;
+    private final WorkoutClassService workoutClassService;
 
     /**
      * Default constructor initializes TrainerDAO with internal connection.
+     * Assumes WorkoutClassService with no scanner (for backward compatibility).
      */
-    public TrainerService() {
+    public TrainerService(WorkoutClassService workoutClassService) {
         this.trainerDAO = new TrainerDAO();
+        this.workoutClassService = workoutClassService;
     }
 
-
-    /**
-     * Registers a new trainer.
-     *
-     * @param trainer Trainer to register
-     */
     public void registerTrainer(Trainer trainer) {
         try {
             trainerDAO.addTrainer(trainer);
@@ -39,9 +37,6 @@ public class TrainerService {
         }
     }
 
-    /**
-     * Lists all registered trainers.
-     */
     public void listAllTrainers() {
         try {
             List<Trainer> trainers = trainerDAO.getAllTrainers();
@@ -57,42 +52,31 @@ public class TrainerService {
         }
     }
 
-    /**
-     * Displays a trainer's details by ID.
-     *
-     * @param trainerId Trainer ID
-     */
     public Trainer getTrainerById(int id) {
-    String sql = "SELECT * FROM users WHERE user_id = ? AND role = 'trainer'";
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String sql = "SELECT * FROM users WHERE user_id = ? AND role = 'trainer'";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        stmt.setInt(1, id);
-        ResultSet rs = stmt.executeQuery();
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
 
-        if (rs.next()) {
-            return new Trainer(
-                rs.getInt("user_id"),
-                rs.getString("username"),
-                rs.getString("password_hash"),
-                rs.getString("email"),
-                rs.getString("phone"),
-                rs.getString("address")
-            );
+            if (rs.next()) {
+                return new Trainer(
+                    rs.getInt("user_id"),
+                    rs.getString("username"),
+                    rs.getString("password_hash"),
+                    rs.getString("email"),
+                    rs.getString("phone"),
+                    rs.getString("address")
+                );
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(TrainerService.class.getName()).severe("Error fetching trainer: " + e.getMessage());
         }
-
-    } catch (SQLException e) {
-        Logger.getLogger(TrainerService.class.getName()).severe("Error fetching trainer: " + e.getMessage());
+        return null;
     }
-    return null;
-}
 
-
-    /**
-     * Updates a trainer’s information.
-     *
-     * @param trainer Updated trainer object
-     */
     public void updateTrainer(Trainer trainer) {
         try {
             trainerDAO.updateTrainer(trainer);
@@ -102,11 +86,6 @@ public class TrainerService {
         }
     }
 
-    /**
-     * Deletes a trainer by ID.
-     *
-     * @param trainerId ID of the trainer to delete
-     */
     public void deleteTrainer(int trainerId) {
         try {
             trainerDAO.deleteTrainer(trainerId);
@@ -116,11 +95,6 @@ public class TrainerService {
         }
     }
 
-    /**
-     * Displays all workout classes assigned to a trainer.
-     *
-     * @param trainerId Trainer ID
-     */
     public void viewAssignedClasses(int trainerId) {
         try {
             List<WorkoutClass> classes = trainerDAO.getAssignedClasses(trainerId);
@@ -136,13 +110,7 @@ public class TrainerService {
         }
     }
 
-    /**
-     * Displays the roster of members enrolled in a specific workout class.
-     *
-     * @param classId The ID of the workout class
-     */
     public void viewRoster(int classId) {
-        WorkoutClassService workoutClassService = new WorkoutClassService();
         List<Member> roster = workoutClassService.getClassRoster(classId);
         if (roster.isEmpty()) {
             System.out.println("No members enrolled in this class.");
@@ -154,13 +122,6 @@ public class TrainerService {
         }
     }
 
-
-    /**
-     * Assigns a trainer to a workout class.
-     *
-     * @param classId   Workout class ID
-     * @param trainerId Trainer ID
-     */
     public void assignToClass(int classId, int trainerId) {
         try {
             trainerDAO.assignTrainerToClass(classId, trainerId);
@@ -169,6 +130,4 @@ public class TrainerService {
             System.err.println("Error assigning trainer: " + e.getMessage());
         }
     }
-
-
 }
