@@ -1,6 +1,5 @@
 package com.group7.gym;
 
-import com.group7.gym.models.Admin;
 import com.group7.gym.models.User;
 import com.group7.gym.service.AdminService;
 import com.group7.gym.service.MembershipService;
@@ -42,16 +41,12 @@ public class AdminMenu {
             switch (choice) {
                 case 1:
                     System.out.println("----- Admin Profile -----");
-                    Admin a = adminService.getAdminById(admin.getUserId());
-                    if (a != null) {
-                        System.out.println("\nYour Profile:");
-                        System.out.println("ID       : " + a.getUserId());
-                        System.out.println("Username : " + a.getUsername());
-                        System.out.println("Email    : " + a.getEmail());
-                        System.out.println("Phone    : " + a.getPhone());
-                    } else {
-                        System.out.println("Admin profile not found.");
-                    }
+                    User a = admin; // Already logged in and passed in
+                    System.out.println("\nYour Profile:");
+                    System.out.println("ID       : " + a.getUserId());
+                    System.out.println("Username : " + a.getUsername());
+                    System.out.println("Email    : " + a.getEmail());
+                    System.out.println("Phone    : " + a.getPhone());
                     break;
                 case 2:
                     System.out.println("----- View All Users -----");
