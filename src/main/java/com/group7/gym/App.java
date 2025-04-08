@@ -99,7 +99,7 @@ public class App {
                             new AdminMenu(scanner, new AdminService(), membershipService, user).show();
                             break;
                         case "trainer":
-                            new TrainerMenu(scanner, new TrainerService(), workoutClassService, user).show();
+                            new TrainerMenu(scanner, new TrainerService(workoutClassService), workoutClassService, user).show();
                             break;
                         case "member":
                             new MemberMenu(scanner, memberService, workoutClassService, membershipService, user).show();
