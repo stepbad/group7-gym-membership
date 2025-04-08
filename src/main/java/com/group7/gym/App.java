@@ -92,7 +92,7 @@ public class App {
                     System.out.println("Login Successful! Welcome, " + user.getUsername());
                     switch (user.getRole().toLowerCase()) {
                         case "admin":
-                            new AdminMenu(scanner, new AdminService(), user).show();
+                            new AdminMenu(scanner, new AdminService(), new MembershipService(), user).show();
                             break;
                         case "trainer":
                             new TrainerMenu(scanner, new TrainerService(), new WorkoutClassService(), user).show();
