@@ -13,8 +13,28 @@ import java.util.logging.Logger;
  * DAO for managing the member_class relationship.
  */
 public class MemberClassDAO {
-
     private static final Logger logger = Logger.getLogger(MemberClassDAO.class.getName());
+
+    /**
+     * Enrolls a member into a workout class.
+     * @param memberId ID of the member
+     * @param classId ID of the class
+     * @return true if enrollment successful, false otherwise
+     */
+    public boolean enrollMember(int memberId, int classId) {
+        String sql = "INSERT INTO member_class (member_id, workout_class_id) VALUES (?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, memberId);
+            stmt.setInt(2, classId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            logger.warning("Error enrolling member: " + e.getMessage());
+            return false;
+        }
+    }
+
 
     /**
      * Returns a list of members assigned to a specific class.
