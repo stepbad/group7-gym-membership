@@ -122,7 +122,7 @@ public class WorkoutClassService {
         }
     }
 
-    /**
+ /**
      * Allows a member to join a workout class if they have enough credits.
      * Deducts 1 credit (=$5) upon success.
      */
@@ -131,15 +131,14 @@ public class WorkoutClassService {
         int classId = scanner.nextInt();
         scanner.nextLine();
 
-        int credits = membershipDAO.getCreditsByMemberId(memberId);
-        if (credits < 1) {
+        boolean creditUsed = membershipService.useCredit(memberId);
+        if (!creditUsed) {
             System.out.println("Insufficient credits. You need at least 1 credit to join.");
             return;
         }
 
         boolean enrolled = memberClassDAO.enrollMember(memberId, classId);
         if (enrolled) {
-            membershipDAO.deductCredits(memberId, 1);
             System.out.println("Successfully joined the class! 1 credit deducted.");
         } else {
             System.out.println("Failed to join class. Please try again or contact support.");

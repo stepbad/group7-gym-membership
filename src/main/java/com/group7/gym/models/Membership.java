@@ -144,15 +144,12 @@ public class Membership {
         this.availableCredits = availableCredits;
     }
 
-    /**
-     * Returns whether the membership includes access to credit-based features.
-     *
-     * @return true if Gold or Platinum, false otherwise
-     */
     public boolean hasAccessToCredits() {
         return membershipType != null &&
-               (membershipType.equalsIgnoreCase("Gold Package")
-             || membershipType.equalsIgnoreCase("Platinum Package"));
+               (membershipType.equalsIgnoreCase("Gold") ||
+                membershipType.equalsIgnoreCase("Platinum") ||
+                membershipType.equalsIgnoreCase("Gold Package") ||
+                membershipType.equalsIgnoreCase("Platinum Package"));
     }
 
     /**

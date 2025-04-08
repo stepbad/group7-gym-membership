@@ -46,7 +46,7 @@ public class MembershipService {
 
         boolean result = membershipDAO.addMembership(membership);
         if (result) {
-            logger.info("Membership added successfully.");
+            logger.info("Your credit card has been charged and Membership added successfully.");
         } else {
             logger.warning("Failed to add membership.");
         }
@@ -64,14 +64,23 @@ public class MembershipService {
     }
 
     /**
-     * Retrieves the most recent membership for a specific member.
-     * Assumes each member has at most one active membership.
+     * Retrieves the most relevant membership for a specific member,
+     * prioritizing those with class access and available credits.
      *
      * @param memberId ID of the member
      * @return Membership object or null if not found
      */
     public Membership getCurrentMembershipByMemberId(int memberId) {
         List<Membership> memberships = membershipDAO.getMembershipsByMemberId(memberId);
+
+        // Prefer memberships that include credit access and have available credits
+        for (Membership m : memberships) {
+            if (m.hasAccessToCredits() && m.getAvailableCredits() > 0) {
+                return m;
+            }
+        }
+
+        // Fallback: return any available membership
         return (memberships.isEmpty()) ? null : memberships.get(0);
     }
 
@@ -172,4 +181,4 @@ public class MembershipService {
         }
         return totalRevenue;
     }
-}
+} 

@@ -272,7 +272,6 @@ public class MembershipDAO {
         return totalRevenue;
     }
 
-
     /**
      * Helper method to extract a Membership object from a ResultSet.
      *
