@@ -26,7 +26,7 @@ public class AdminMenu {
             System.out.println("1. View My Profile");
             System.out.println("2. View All Users");
             System.out.println("3. Delete User by ID");
-            System.out.println("4. View Memberships & Revenue");
+            System.out.println("4. Total Revenue");
             System.out.println("5. Logout");
             System.out.print("Choose an option: ");
 
