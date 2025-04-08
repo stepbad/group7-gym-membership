@@ -21,6 +21,7 @@ CREATE TABLE memberships (
     membership_type VARCHAR(50) NOT NULL,
     membership_description TEXT,
     membership_cost DECIMAL(10,2) NOT NULL,
+    available_credits INTEGER DEFAULT 0,
     member_id INT REFERENCES users(user_id) ON DELETE CASCADE,
     start_date DATE DEFAULT CURRENT_DATE,
     end_date DATE
@@ -36,7 +37,6 @@ CREATE TABLE workout_classes (
     end_time TIME,
     class_date DATE
 );
-
 
 -- MEMBER_CLASS TABLE
 CREATE TABLE member_class (
